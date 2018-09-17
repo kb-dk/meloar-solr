@@ -2,7 +2,7 @@
 <add><doc>
   <field name="id">sample2</field>
   <field name="loar_id">loarID2</field>
-  <field name="external_resource">http://example.com/loar2</field>
+  <field name="external_resource">https://www.statsbiblioteket.dk/nationalbibliotek/adgang-til-samlingerne/aviser/de-danske-aviser/dda_forkortelser.pdf</field>
   <field name="author">Brynhilde Iceberg</field>
   <field name="author">Karlof Boris</field>
   <field name="keyword">nordpolen</field>

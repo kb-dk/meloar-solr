@@ -2,7 +2,7 @@
 <add><doc>
   <field name="id">sample1b</field>
   <field name="loar_id">loadID1</field>
-  <field name="external_resource">http://example.com/loar1</field>
+  <field name="external_resource">https://www.statsbiblioteket.dk/om-statsbiblioteket/Pressemeddelelse_Enestendesamlingafdanskeaviserfylder100.pdf</field>
   <field name="author">Ingebord Kammerjunker</field>
   <field name="author">Jens Klejner</field>
   <field name="keyword">krukker</field>
