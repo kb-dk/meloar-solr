@@ -3,7 +3,7 @@
 This schema is for Solr 7+ and will not work under Solr 6.
 -->
 
-<schema name="meloar" version="1.0">
+<schema name="meloar" version="1.6">
     <fields>
         <!-- Solr special purpose meta-fields. Explicit attributes to be sure they are set correctly -->
         <field name="id" type="string" indexed="true" stored="true" docValues="true" required="true" />
