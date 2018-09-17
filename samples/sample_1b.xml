@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<add><doc>
+  <field name="id">sample1b</field>
+  <field name="loar_id">loadID1</field>
+  <field name="external_resource">http://example.com/loar1</field>
+  <field name="author">Ingebord Kammerjunker</field>
+  <field name="author">Jens Klejner</field>
+  <field name="keyword">krukker</field>
+  <field name="keyword">drone</field>
+  <field name="keyword">opmåling</field>
+
+  <field name="page">2</field>
+  <field name="page">3</field>
+  <field name="chapter">Formål</field>
+  <field name="content">Konflikten var en konfrontation mellem det kejserlige Kina under Qing-dynastiet og en sekt omkring Hong Xiuquan, en mystiker som var gået over til kristendommen efter nogle måneders undervisning fra en amerikansk protestantisk missionær. Han blev aldrig døbt, men prædikede en lære han havde udviklet af socialutopiske tanker, egne mystiske åbenbaringer og elementer han havde fået med fra undervisningen i Det gamle testamente. </field>
+</doc></add>  

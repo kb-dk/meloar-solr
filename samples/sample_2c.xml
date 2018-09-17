@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<add><doc>
+  <field name="id">sample2c</field>
+  <field name="loar_id">loarID2</field>
+  <field name="external_resource">http://example.com/loar2</field>
+  <field name="author">Brynhilde Iceberg</field>
+  <field name="author">Karlof Boris</field>
+  <field name="keyword">nordpolen</field>
+
+  <field name="page">3</field>
+  <field name="chapter">Jydegrydeflikning</field>
+  <field name="content">En paritetsbit er en kontrol-bit der i et vist omfang sikrer at binære tal er korrekt opfattede. En paritetsbit kan kun vise et ulige antal bitfejl. Hvis antallet af fejl er lige (f.eks. 2) opdages fejlene ikke.
+
+Man taler om lige eller ulige paritet.
+
+Ved lige paritet skal tværsummen af bitenes værdier inklusive paritetsbit, xor'et sammen, være et lige tal, og omvendt ved ulige.
+
+For at opnå dette tilføjes en ekstra bit med den korrekt værdi.
+
+Eksempel:
+
+7 databit og 1 paritet
+
+Lige : 0101010 paritetsbit 1 = 01010101
+Ulige: 0101010 paritetsbit 0 = 01010100
+
+Der findes systemer til udvidet paritetskontrol med flere paritetsbits, hvor hver paritetsbit refererer til grupper af bits inden for databitene. På denne måde kan en mulighed for korrektion opnås og en sikkerhed mod flere end én bitfejl. </field>
+</doc></add>  

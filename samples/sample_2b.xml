@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<add><doc>
+  <field name="id">sample2b</field>
+  <field name="loar_id">loarID2</field>
+  <field name="external_resource">http://example.com/loar2</field>
+  <field name="author">Brynhilde Iceberg</field>
+  <field name="author">Karlof Boris</field>
+  <field name="keyword">nordpolen</field>
+
+  <field name="page">2</field>
+  <field name="chapter">Formål</field>
+  <field name="content">Muspel er en jætte i nordisk mytologi. Muspel er en ildjætte, som bor i Muspelheim langt mod syd. Ved Ragnarok sender han sine sønner mod nord for at brænde Midgård af. </field>
+</doc></add>  

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<add><doc>
+  <field name="id">sample1c</field>
+  <field name="loar_id">loadID1</field>
+  <field name="external_resource">http://example.com/loar1</field>
+  <field name="author">Ingebord Kammerjunker</field>
+  <field name="author">Jens Klejner</field>
+  <field name="keyword">krukker</field>
+  <field name="keyword">drone</field>
+  <field name="keyword">opmåling</field>
+
+  <field name="page">3</field>
+  <field name="page">4</field>
+  <field name="page">5</field>
+  <field name="page">6</field>
+  <field name="chapter">Pandekageteorien</field>
+  <field name="content">Han blev student fra Metropolitanskolen 1873 og cand. jur. 1882. Grove, som siden 1884 var ansat i Rigsarkivet, var godt hjemme i dansk personalhistorie og flådehistorie og redigerede Personalhistorisk Tidsskrift siden 1895. Han udgav Rasmus Æreboes Selvbiografi (1889) og Admiral Just Juels Optegnelser fra hans Rejse i Rusland under Peter den Store (1893), dertil Admiralerne Obdams og Ruyters Dagbog fra deres Togter 1658-60 (1907). Af megen interesse for Københavns historie er hans udgave af fortegnelsen over byens huse og indbyggere efter branden 1728 (1906) og det smukke festskrift om Københavns Havn (1908). </field>
+</doc></add>  

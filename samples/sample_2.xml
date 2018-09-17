@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<add><doc>
+  <field name="id">sample2</field>
+  <field name="loar_id">loarID2</field>
+  <field name="external_resource">http://example.com/loar2</field>
+  <field name="author">Brynhilde Iceberg</field>
+  <field name="author">Karlof Boris</field>
+  <field name="keyword">nordpolen</field>
+
+  <field name="page">1</field>
+  <field name="chapter">Lokation</field>
+  <field name="content">Tåge er en sky der ligger på jorden; bittesmå dråber af vand der er lette nok til at svæve omkring i luften uden at falde ned som nedbør. I meteorologien skelner man mellem tåge når sigtbarheden er mindre end en kilometer, og dis hvis sigtbarheden er bedre.
+
+Ligesom med nedbør skabes disse dråber ved, at vanddamp i atmosfæren tvinges til at kondensere til flydende vand når luften er mættet med damp. Denne mætning kan opstå hvis luften tilføres mere vanddamp end den kan "rumme", og dertil varierer mætningspunktet med temperaturen; jo varmere luften er, desto mere vanddamp kan den indeholde. Hvis man køler en næsten mættet luftmængde ned, ender luften også med at indeholde "for meget" vanddamp i forhold til temperaturen, og vandet tvinges til at kondenseres. </field>
+</doc></add>  
