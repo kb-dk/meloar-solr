@@ -43,6 +43,21 @@ Inspect by performing a search in http://localhost:9595/solr/#/meloar/query
 
 ## Fetching of LOAR data
 
+Fetch all from LOAR OAI-PMH
+```
+REPOSITORY="https://loar.kb.dk/oai/request" METADATA_PREFIX="oai_dc" PROJECT="loar_kb" ./harvest_oai_pmh.sh
+```
+Results are stored in `loar_kb`. To update the harvest, re-run the command; it will continue from last time.
+
+## Fetching of other sources
+
+If the OAI-PMH source does not support the timestamp based `from`-parameter, only full harvests are possible:
+```
+USE_RESUMPTION="true" REPOSITORY="http://www.kulturarv.dk/ffrepox/OAIHandler" METADATA_PREFIX="ff" PROJECT="ff_slks" ./harvest_oai_pmh.sh
+```
+(this fetches 20K records in pages of 250 records)
+
+Results are stored in a folder named from the `PROJECT`-parameter.
 
 ## Indexing LOAR data
 
