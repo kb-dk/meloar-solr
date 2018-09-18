@@ -66,5 +66,14 @@ USE_RESUMPTION="true" REPOSITORY="http://www.kulturarv.dk/ffrepox/OAIHandler" ME
 
 Results are stored in a folder named from the `PROJECT`-parameter.
 
-## Indexing LOAR data
+## Harvesting & indexing LOAR data
 
+Fetch data
+```
+REPOSITORY="https://dspace-stage.statsbiblioteket.dk/oai/request" METADATA_PREFIX="xoai" PROJECT="ff" SET="com_1902_357" ./harvest_oai_pmh.sh
+```
+
+Split into single records
+```
+PROJECT="ff" ./split_harvest.sh
+```
