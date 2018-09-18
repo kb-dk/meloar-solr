@@ -79,7 +79,7 @@ harvest_time() {
         else
             local LAST=$(cat "$PROGRESS_FILE")
         fi
-        local REQUEST="${REPOSITORY}?verb=ListRecords&metadataPrefix=${METADATA_PREFIX}&from=${LAST}"
+        local REQUEST="${REQUEST}&from=${LAST}"
         local D="$PROJECT/oai-pmh.$(sed 's/://g' <<< "$LAST").xml"
         echo "> $REQUEST"
         curl -s "$REQUEST" > "$D"
