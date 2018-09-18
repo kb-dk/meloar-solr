@@ -43,11 +43,18 @@ Inspect by performing a search in http://localhost:9595/solr/#/meloar/query
 
 ## Fetching of LOAR data
 
-Fetch all from LOAR OAI-PMH
+Fetch all from official LOAR OAI-PMH
 ```
 REPOSITORY="https://loar.kb.dk/oai/request" METADATA_PREFIX="oai_dc" PROJECT="loar_kb" ./harvest_oai_pmh.sh
 ```
 Results are stored in `loar_kb`. To update the harvest, re-run the command; it will continue from last time.
+
+
+Fetch specific collection from stage LOAR OAI-PMH ("Arkæologiske undersøgelser"). Only available at the Royal Danish Library.
+```
+REPOSITORY="https://dspace-stage.statsbiblioteket.dk/oai/request" METADATA_PREFIX="oai_dc" PROJECT="loar_stage_kb" SET="com_1902_357" ./harvest_oai_pmh.sh
+```
+
 
 ## Fetching of other sources
 
