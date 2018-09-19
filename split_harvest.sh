@@ -1,20 +1,19 @@
 #!/bin/bash
 
 #
-# ff-specific processor
+# Splits OAI-PMH harvested record collections into single records
 #
-# TODO: set 
 
 ###############################################################################
 # CONFIG
 ###############################################################################
 
-if [[ -s "split_harvest.conf" ]]; then
-    source "split_harvest.conf"
+if [[ -s "meloar.conf" ]]; then
+    source "meloar.conf"
 fi
 pushd ${BASH_SOURCE%/*} > /dev/null
-if [[ -s "split_harvest.conf" ]]; then
-    source "split_harvest.conf"
+if [[ -s "meloar.conf" ]]; then
+    source "meloar.conf"
 fi
 
 : ${PROJECT:="$1"}

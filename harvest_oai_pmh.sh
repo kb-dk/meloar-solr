@@ -8,18 +8,16 @@
 # https://loar.kb.dk/oai/request?verb=ListRecords&metadataPrefix=oai_dc&set=com_1902_157
 #
 
-# TODO: set 
-
 ###############################################################################
 # CONFIG
 ###############################################################################
 
-if [[ -s "harvest_oai_pmh.conf" ]]; then
-    source "harvest_oai_pmh.conf"
+if [[ -s "meloar.conf" ]]; then
+    source "meloar.conf"
 fi
 pushd ${BASH_SOURCE%/*} > /dev/null
-if [[ -s "harvest_oai_pmh.conf" ]]; then
-    source "harvest_oai_pmh.conf"
+if [[ -s "meloar.conf" ]]; then
+    source "meloar.conf"
 fi
 
 : ${REPOSITORY:="https://loar.kb.dk/oai/request"}
