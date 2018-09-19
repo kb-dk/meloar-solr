@@ -70,10 +70,20 @@ Results are stored in a folder named from the `PROJECT`-parameter.
 
 Fetch data
 ```
-REPOSITORY="https://dspace-stage.statsbiblioteket.dk/oai/request" METADATA_PREFIX="xoai" PROJECT="ff" SET="com_1902_357" ./harvest_oai_pmh.sh
+USE_RESUMPTION="true" REPOSITORY="https://dspace-stage.statsbiblioteket.dk/oai/request" METADATA_PREFIX="xoai" PROJECT="ff" SET="com_1902_357" ./harvest_oai_pmh.sh
 ```
 
 Split into single records
 ```
 PROJECT="ff" ./split_harvest.sh
+```
+
+Create basic SolrXMLDocuments for the records
+```
+PROJECT="ff" ./xoai2solr.sh
+```
+
+Enrich the Solr Documents for specific a LOAR-collection, in this case `ff`
+```
+PROJECT="ff" ./ff_enrich.sh
 ```
