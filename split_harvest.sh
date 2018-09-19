@@ -62,6 +62,7 @@ split_records() {
             rm $FF
         done
     done
+    echo "Finished extracting $(find . -iname "*.xml" | wc -l) records to $(pwd)"
     popd > /dev/null
 }
 
