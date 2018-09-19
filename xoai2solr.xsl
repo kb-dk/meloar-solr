@@ -59,6 +59,19 @@
         </xsl:for-each>
       </xsl:for-each>
 
+      <!-- date -->
+      <xsl:for-each select="xoai:element[@name='date']">
+        <xsl:for-each select="xoai:element[@name='issued']">
+          <xsl:for-each select="xoai:element"> <!-- language -->
+            <xsl:for-each select="xoai:field[@name='value']">
+              <field name="cdate">
+                <xsl:value-of select="."/><xsl:text>T00:00:00Z</xsl:text>
+              </field>
+            </xsl:for-each>
+          </xsl:for-each>
+        </xsl:for-each>
+      </xsl:for-each>
+      
       <!-- title -->
       <xsl:for-each select="xoai:element[@name='title']">
         <xsl:for-each select="xoai:element"> <!-- language -->
@@ -83,7 +96,7 @@
         </xsl:for-each>
       </xsl:for-each>
 
-      <!-- local resource -->
+      <!-- LOAR URI -->
       <xsl:for-each select="xoai:element[@name='identifier']">
         <xsl:for-each select="xoai:element[@name='uri']">
           <xsl:for-each select="xoai:element"> <!-- none -->
@@ -96,16 +109,29 @@
         </xsl:for-each>
       </xsl:for-each>
 
+      <!-- external PDF -->
+      <xsl:for-each select="xoai:element[@name='relation']">
+        <xsl:for-each select="xoai:element[@name='uri']">
+          <xsl:for-each select="xoai:element"> <!-- none -->
+            <xsl:for-each select="xoai:field[@name='value']">
+              <field name="external_resource">
+                <xsl:value-of select="."/>
+              </field>
+            </xsl:for-each>
+          </xsl:for-each>
+        </xsl:for-each>
+      </xsl:for-each>
+
     </xsl:for-each>
 
-    <!-- PDF -->
+    <!-- local PDF -->
     <xsl:for-each select="xoai:element[@name='bundles']">
       <xsl:for-each select="xoai:element[@name='bundle']">
         <xsl:if test="xoai:field[@name='name'] = 'ORIGINAL'">
           <xsl:for-each select="xoai:element[@name='bitstreams']">
             <xsl:for-each select="xoai:element[@name='bitstream']">
               <xsl:for-each select="xoai:field[@name='url']">
-                <field name="external_resource">
+                <field name="loar_resource">
                   <xsl:value-of select="."/>
                 </field>
               </xsl:for-each>
