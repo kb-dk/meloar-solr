@@ -54,7 +54,7 @@ convert_records() {
     cd records
     for RECORD in *.xml; do
         local BASE=${RECORD%.*}
-        xsltproc "$XSLT" "$RECORD" | xmllint --format - | grep -v "<\?xml" > "../solr_base/${BASE}.solrxml"
+        xsltproc "$XSLT" "$RECORD" | xmllint --format - | grep -v '<[?]xml ' > "../solr_base/${BASE}.solrxml"
     done
     cd ../solr_base
     echo "Finished producing $(find . -iname "*.solrxml" | wc -l) SolrXMLDocument to $(pwd)/"
