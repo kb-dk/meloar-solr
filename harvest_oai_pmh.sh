@@ -111,7 +111,7 @@ harvest_resumption() {
         else
             REQUEST="${REQUEST}&metadataPrefix=$METADATA_PREFIX"
             if [[ "." != ".$SET" ]]; then
-                R="${R}&set=${SET}"
+                REQUEST="${REQUEST}&set=${SET}"
             fi
         fi
         PAGE=$(( PAGE+1 ))
