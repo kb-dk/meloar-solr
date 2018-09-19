@@ -17,6 +17,7 @@ This schema is for Solr 7+ and will not work under Solr 6.
         <field name="external_resource"    type="string" />
 
         <field name="ctime"                type="date" />
+        <field name="enriched"             type="boolean" default="false" />
         
         <field name="author"               type="text_general" multiValued="true" />
         <field name="author_verbatim"      type="string" multiValued="true" />
