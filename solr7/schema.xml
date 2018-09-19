@@ -12,16 +12,21 @@ This schema is for Solr 7+ and will not work under Solr 6.
         <field name="_text_" type="text_general" multiValued="true" /> <!-- Isn't this only used for schema-less? -->
 
         <field name="loar_id"              type="string" />
+        <field name="loar_uri"             type="string" />
+        <field name="loar_resource"        type="string" />
         <field name="external_resource"    type="string" />
 
+        <field name="ctime"                type="date" />
+        
         <field name="author"               type="text_general" multiValued="true" />
         <field name="author_verbatim"      type="string" multiValued="true" />
 
         <field name="keyword"              type="string" multiValued="true" />
 
         <field name="page"                 type="int" multiValued="true" />
+
         <field name="chapter"              type="text_general" />
-        <field name="chapter_verbatim"     type="text_general" />
+        <field name="chapter_verbatim"     type="string" />
         
         <field name="content"              type="text_general" multiValued="true" />
 
