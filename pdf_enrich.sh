@@ -66,20 +66,21 @@ enrich_single() {
     while IFS=$'\n' read -r CHAPTER
     do
         CHAPTER_COUNT=$(( CHAPTER_COUNT+1 ))
-        local DEST="${DEST_BASE}_chapter_${CHAPTER_COUNT}"
-        cat "$RECORD" | sed -e 's/\(<field name="id">[^<]\+\)\(<\/field>\)/\1_chapter_'$CHAPTER_COUNT'\2/' -e 's/<\/doc>//' >> "$DEST"
-        echo "  <field name=\"chapter\">$(jq .heading <<< "$CHAPTER")</field>" >> "$DEST"
+        local DEST="${DEST_BASE}_chapter_${CHAPTER_COUNT}.xml"
+        cat "$RECORD" | sed -e 's/\(<field name="id">[^<]\+\)\(<\/field>\)/\1_chapter_'$CHAPTER_COUNT'\2/' -e 's/<\/doc>//' -e 's/<\/add>//' > "$DEST"
+        echo "    <field name=\"chapter\">$(jq .heading <<< "$CHAPTER")</field>" >> "$DEST"
         local PAGE=$(jq .pageNumber <<< "$CHAPTER")
         if [[ "." != ".$PAGE" ]]; then
-            echo "  <field name=\"page\">$PAGE</field>" >> "$DEST"
+            echo "    <field name=\"page\">$PAGE</field>" >> "$DEST"
         fi
         
         while IFS=$'\n' read -r LINE
         do
-            echo "  <field name=\"content\">$LINE</field>" >> "$DEST"
+            echo "    <field name=\"content\">$LINE</field>" >> "$DEST"
         done <<< $(jq .text <<< "$CHAPTER" | sed 's/\\n/\n/g')
-        echo '<field name="enriched">true</field>' >> "$DEST"
-        echo "</doc>" >> "$DEST"
+        echo '    <field name="enriched">true</field>' >> "$DEST"
+        echo '  </doc>' >> "$DEST"
+        echo '</add>' >> "$DEST"
     done <<< $(jq -c '.sections[]' "$T" | jq -c 'select(.text != "")')
     if [[ "$CHAPTER_COUNT" -eq 0 ]]; then
         echo "- No text in $RECORD"
@@ -94,7 +95,9 @@ enrich() {
     mkdir -p pdf_enriched
     cd $SUB_SOURCE
     COUNT=0
-    for RECORD in *.solrxml; do
+    for RECORD in *.xml; do
+        COUNT=$((COUNT+1))
+
         local PDF=$(grep -o "<field name=\"loar_resource\">.*pdf</field>" "$RECORD" | sed 's/.*>\([^<]\+\)<.*/\1/')
         if [[ "." == ".$PDF" ]]; then
             # TODO: Don't skip but make a skeleton record, marked with not having a PDF
@@ -111,7 +114,6 @@ enrich() {
             continue
         fi
 
-        COUNT=$((COUNT+1))
         echo "$COUNT> Fetching chapters for external PDF for ${RECORD}: $EXTERNAL"
         enrich_single "$RECORD" "$EXTERNAL"
         if [[ "$COUNT" -eq "$MAX_RECORDS" ]]; then
