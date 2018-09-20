@@ -91,7 +91,7 @@ Fetch extra XML resources for the records
 Create representations of the extra XML resources (ff-specific process) and merge them into the basic SolrXMLDocuments
 ```
 PROJECT="ff" XSLT="$(pwd)/ff2solr.xsl" SUB_SOURCE="resources" SUB_DEST="ff_enrich" ./apply_xslt.sh
-PROJECT="ff" XSLT="$(pwd)/merge_solrdocs.sh" SUB_SOURCE1="solr_base" SUB_SOURCE2="ff_enrich" DEST="ff_merged" ./apply_xslt.sh
+PROJECT="ff" XSLT="$(pwd)/merge_solrdocs.sh" SUB_SOURCE1="solr_base" SUB_SOURCE2="ff_enrich" DEST="ff_merged" ./merge_solrdocs.sh
 ```
 
 Enrich the Solr Documents with the content from external PDFs, if available
