@@ -13,14 +13,20 @@ This schema is for Solr 7+ and will not work under Solr 6.
 
         <field name="loar_id"              type="string" />
         <field name="loar_uri"             type="string" />
-        <field name="loar_resource"        type="string" />
-        <field name="external_resource"    type="string" />
+        <field name="case"                 type="string" />
+        <field name="loar_resource"        type="string" multiValued="true" />
+        <field name="external_resource"    type="string" multiValued="true" />
 
         <field name="ctime"                type="date" />
         <field name="enriched"             type="boolean" default="false" />
         
+        <field name="title"                type="text_general" multiValued="false" />
+        
         <field name="author"               type="text_general" multiValued="true" />
         <field name="author_verbatim"      type="string" multiValued="true" />
+
+        <field name="place_name"           type="text_general" multiValued="true" />
+        <field name="place_name_verbatim"  type="string" multiValued="true" />
 
         <field name="keyword"              type="string" multiValued="true" />
 
@@ -38,22 +44,22 @@ This schema is for Solr 7+ and will not work under Solr 6.
                          q=*:*&fq=index_time:[2018-05-16T10:33:00Z TO *] -->
         <field name="index_time" type="date" default="NOW" />
 
-        <dynamicField name="*_i"       type="int"    indexed="true"  stored="true" />
-        <dynamicField name="*_is"      type="int"    indexed="true"  stored="true" multiValued="true" />
-        <dynamicField name="*_s"       type="string"  indexed="true"  stored="true" />
-        <dynamicField name="*_ss"      type="string"  indexed="true"  stored="true" multiValued="true" />
-        <dynamicField name="*_l"       type="long"   indexed="true"  stored="true" />
-        <dynamicField name="*_ls"      type="long"   indexed="true"  stored="true" multiValued="true" />
+        <dynamicField name="*_i"       type="int"    indexed="true"  stored="false" docValues="true" />
+        <dynamicField name="*_is"      type="int"    indexed="true"  stored="true" docValues="true" multiValued="true" />
+        <dynamicField name="*_s"       type="string"  indexed="true"  stored="false" docValues="true" />
+        <dynamicField name="*_ss"      type="string"  indexed="true"  stored="true" docValues="true" multiValued="true" />
+        <dynamicField name="*_l"       type="long"   indexed="true"  stored="false" docValues="true" />
+        <dynamicField name="*_ls"      type="long"   indexed="true"  stored="true" docValues="true" multiValued="true" />
         <dynamicField name="*_t"       type="text_general" indexed="true" stored="true" />
         <dynamicField name="*_txt"     type="text_general" indexed="true" stored="true" />
         <dynamicField name="*_b"       type="boolean" indexed="true" stored="true" />
         <dynamicField name="*_bs"      type="boolean" indexed="true" stored="true" multiValued="true" />
-        <dynamicField name="*_f"       type="float"  indexed="true"  stored="true" />
-        <dynamicField name="*_fs"      type="float"  indexed="true"  stored="true" multiValued="true" />
-        <dynamicField name="*_d"       type="double" indexed="true"  stored="true" />
-        <dynamicField name="*_ds"      type="double" indexed="true"  stored="true" multiValued="true" />
+        <dynamicField name="*_f"       type="float"  indexed="true"  stored="false" docValues="true" />
+        <dynamicField name="*_fs"      type="float"  indexed="true"  stored="true" docValues="true" multiValued="true" />
+        <dynamicField name="*_d"       type="double" indexed="true"  stored="false" docValues="true" />
+        <dynamicField name="*_ds"      type="double" indexed="true"  stored="true" docValues="true" multiValued="true" />
         <dynamicField name="*_coordinate" type="double" indexed="true"  stored="false" />
-        <dynamicField name="*_dt"      type="date"    indexed="true"  stored="true" />
+        <dynamicField name="*_dt"      type="date"    indexed="true"  stored="false" />
         <dynamicField name="*_dts"     type="date"    indexed="true"  stored="true" multiValued="true" />
         <dynamicField name="*_p"       type="location" indexed="true" stored="true" />
         <dynamicField name="*_ti"      type="int"    indexed="true"  stored="true" />
@@ -64,8 +70,8 @@ This schema is for Solr 7+ and will not work under Solr 6.
         <dynamicField name="*_tfs"     type="float"  indexed="true"  stored="true" multiValued="true" />
         <dynamicField name="*_td"      type="double" indexed="true"  stored="true" />
         <dynamicField name="*_tds"     type="double" indexed="true"  stored="true" multiValued="true" />
-        <dynamicField name="*_tdt"     type="date"  indexed="true"  stored="true" />
-        <dynamicField name="*_tdts"    type="date"  indexed="true"  stored="true" multiValued="true" />
+        <dynamicField name="*_tdt"     type="date"  indexed="true"  stored="true" docValues="true" />
+        <dynamicField name="*_tdts"    type="date"  indexed="true"  stored="true" docValues="true" multiValued="true" />
         <dynamicField name="attr_*"    type="text_general" indexed="true" stored="true" multiValued="true" />
         <dynamicField name="random_*"  type="random" />
 

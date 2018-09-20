@@ -22,7 +22,7 @@
   <xsl:template match="ff:placeNames">
     <xsl:for-each select="ff:placeName">
       <xsl:if test="position() = last()">
-        <field name="ff_place_name"><xsl:value-of select="ff:name"/></field>
+        <field name="place_name"><xsl:value-of select="ff:name"/></field>
       </xsl:if>
     </xsl:for-each>
   </xsl:template>
@@ -30,8 +30,8 @@
   <!-- gml coordinates -->
   <xsl:template match="ff:geodata">
     <xsl:for-each select="gml:Point">
-      <field name="gml_region"><xsl:value-of select="@srsName"/></field>
-      <field name="gml_dimensions"><xsl:value-of select="gml:pos"/></field>
+      <field name="gml_region_s"><xsl:value-of select="@srsName"/></field>
+      <field name="gml_dimensions_s"><xsl:value-of select="gml:pos"/></field>
     </xsl:for-each>
   </xsl:template>
 
@@ -40,20 +40,20 @@
     <xsl:for-each select="ff:primaryObject">
 
       <xsl:for-each select="ff:text">
-        <field name="object_text"><xsl:value-of select="."/></field>
+        <field name="object_text_t"><xsl:value-of select="."/></field>
       </xsl:for-each>
 
       <xsl:for-each select="ff:from_year">
-        <field name="object_year_from"><xsl:value-of select="."/></field>
+        <field name="object_year_from_i"><xsl:value-of select="."/></field>
       </xsl:for-each>
 
       <xsl:for-each select="ff:to_year">
-        <field name="object_year_to"><xsl:value-of select="."/></field>
+        <field name="object_year_to_i"><xsl:value-of select="."/></field>
       </xsl:for-each>
 
       <xsl:for-each select="ff:objectType">
         <xsl:for-each select="ff:term">
-          <field name="object_type"><xsl:value-of select="."/></field>
+          <field name="object_type_s"><xsl:value-of select="."/></field>
       </xsl:for-each>
       </xsl:for-each>
 
