@@ -57,7 +57,7 @@ split_records() {
             if [[ ! -s ${FF}.xml ]]; then # No empty records
                 rm ${FF}.xml
             else
-                mv ${FF}.xml records/
+                mv ${FF}.xml records/$(sed 's/[.]xml[.]/./' <<< "$FF").xml
             fi
             rm $FF
         done
