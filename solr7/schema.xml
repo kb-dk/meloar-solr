@@ -32,6 +32,8 @@ This schema is for Solr 7+ and will not work under Solr 6.
 
         <field name="page"                 type="int" multiValued="true" />
 
+        <field name="chapter_id"           type="int" />
+        <field name="chapter_total"        type="int" />
         <field name="chapter"              type="text_general" />
         <field name="chapter_verbatim"     type="string" />
         
