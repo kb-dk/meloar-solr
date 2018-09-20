@@ -20,8 +20,8 @@ fi
 
 : ${PROJECT:="$1"}
 : ${SUB_SOURCE:="solr_base"}
+: ${SUB_PDF_JSON:="pdf_json"}
 : ${SUB_DEST:="pdf_enriched"}
-: ${PDF_TO_CHAPTERS="http://teg-desktop.sb.statsbiblioteket.dk:8080/loarindexer/services/pdfinfo?isAllowed=y&sequence=1&url="}
 : ${MAX_RECORDS:="99999999"}
 
 usage() {
@@ -37,9 +37,13 @@ check_parameters() {
         >&2 echo "Error: No project specified"
         usage 3
     fi
-    if [[ ! -d "$PROJECT/$SUB_SOURCE" ]]; then
+    if [[ ! -d "$PROJECT/$SUB_SOURCE/" ]]; then
         >&2 echo "Error: No records folder $PROJECT/$SUB_SOURCE"
         usage 5
+    fi
+    if [[ ! -d "$PROJECT/$SUB_PDF_JSON/" ]]; then
+        >&2 echo "Error: No PDF_JSON folder $PROJECT/$SUB_PDF_JSON"
+        usage 6
     fi
 }
 
@@ -48,7 +52,7 @@ check_parameters() {
 ################################################################################
 
 enrich_single() {
-    local T=$(mktemp)
+    local JSON="../$SUB_PDF_JSON/$RECORD"
     local RECORD="$1"
     local EXTERNAL="$2"
     local DEST="../${SUB_DEST}/$RECORD"
@@ -59,21 +63,21 @@ enrich_single() {
         return
     fi
     
-    local R="${PDF_TO_CHAPTERS}${EXTERNAL}"
-    curl -s "$R" > "$T"
-
-    if [[ "." == .$(grep '"sections"' "$T") ]]; then
+    if [[ "." == .$(grep '"sections"' "$JSON") ]]; then
         echo " - Could not PDF-parse. Copying as-is $RECORD"
         cp "$RECORD" "$DEST"
         return
     fi
 
+    TOTAL_CHAPTERS=$(jq -c '.sections[]' "$JSON" | jq -c 'select(.text != "")' | wc -l)
     CHAPTER_COUNT=0
     while IFS=$'\n' read -r CHAPTER
     do
         CHAPTER_COUNT=$(( CHAPTER_COUNT+1 ))
         local DEST="${DEST_BASE}_chapter_${CHAPTER_COUNT}.xml"
         cat "$RECORD" | sed -e 's/\(<field name="id">[^<]\+\)\(<\/field>\)/\1_chapter_'$CHAPTER_COUNT'\2/' -e 's/<\/doc>//' -e 's/<\/add>//' > "$DEST"
+        echo "    <field name=\"chapter_id\">$CHAPTER_COUNT</field>" >> "$DEST"
+        echo "    <field name=\"chapter_total\">$TOTAL_CHAPTERS</field>" >> "$DEST"
         echo "    <field name=\"chapter\">$(jq .heading <<< "$CHAPTER")</field>" >> "$DEST"
         local PAGE=$(jq .pageNumber <<< "$CHAPTER")
         if [[ "." != ".$PAGE" ]]; then
@@ -87,13 +91,12 @@ enrich_single() {
         echo '    <field name="enriched">true</field>' >> "$DEST"
         echo '  </doc>' >> "$DEST"
         echo '</add>' >> "$DEST"
-    done <<< $(jq -c '.sections[]' "$T" | jq -c 'select(.text != "")')
+    done <<< $(jq -c '.sections[]' "$JSON" | jq -c 'select(.text != "")')
     if [[ "$CHAPTER_COUNT" -eq 0 ]]; then
         echo "- No text in $RECORD"
     else
         echo "- Extracted $CHAPTER_COUNT chapters from $RECORD"
     fi
-    rm "$T"
 }
 
 enrich() {
@@ -104,24 +107,13 @@ enrich() {
     for RECORD in *.xml; do
         COUNT=$((COUNT+1))
 
-        local PDF=$(grep -o "<field name=\"loar_resource\">.*pdf</field>" "$RECORD" | sed 's/.*>\([^<]\+\)<.*/\1/')
-        if [[ "." == ".$PDF" ]]; then
-            # TODO: Don't skip but make a skeleton record, marked with not having a PDF
-            echo "Skipping enrichment og $RECORD as it has no PDF"
-            cp "$RECORD" "../${SUB_DEST}/$RECORD"
-            continue
+        if [[ -s "../$SUB_PDF_JSON/$RECORD" ]]; then
+            echo "$COUNT> Enriching record with chapters from external PDF for ${RECORD}"
+            enrich_single "$RECORD"
+        else
+            echo "$COUNT> No PDF JSON available, copying record directly for ${RECORD}"
+            cp "$RECORD" "../$SUB_DEST"
         fi
-
-        local EXTERNAL=$(grep -o "<field name=\"external_resource\">.*</field>" "$RECORD" | sed 's/.*>\([^<]\+\)<.*/\1/')
-        if [[ "." == ".$EXTERNAL" ]]; then
-            # TODO: Don't skip but make a skeleton record, marked with not having a PDF
-            echo "Error: No external resource for $RECORD with PDF, skipping"
-            cp "$RECORD" "../${SUB_DEST}/$RECORD"
-            continue
-        fi
-
-        echo "$COUNT> Fetching chapters for external PDF for ${RECORD}: $EXTERNAL"
-        enrich_single "$RECORD" "$EXTERNAL"
         if [[ "$COUNT" -eq "$MAX_RECORDS" ]]; then
             break
         fi
