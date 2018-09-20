@@ -83,18 +83,23 @@ Create basic SolrXMLDocuments for the records
 PROJECT="ff" XSLT="$(pwd)/xoai2solr.xsl" SUB_SOURCE="records" SUB_DEST="solr_base" ./apply_xslt.sh
 ```
 
-Fetch extra XML resources for the records
+Fetch extra ff-metadata XML resources for the records and transform them
 ```
-./fetch_external.sh
-```
-
-Create representations of the extra XML resources (ff-specific process) and merge them into the basic SolrXMLDocuments
-```
-PROJECT="ff" XSLT="$(pwd)/ff2solr.xsl" SUB_SOURCE="resources" SUB_DEST="ff_enrich" ./apply_xslt.sh
-PROJECT="ff" XSLT="$(pwd)/merge_solrdocs.sh" SUB_SOURCE1="solr_base" SUB_SOURCE2="ff_enrich" DEST="ff_merged" ./merge_solrdocs.sh
+PROJECT="ff" SUB_SOURCE="solr_base" SUB_DEST="ff_raw_metadata" RESOURCE_FIELD="loar_resource" RESOURCE_EXT=".xml" ./fetch_resources.sh
+PROJECT="ff" XSLT="$(pwd)/ff2solr.xsl" SUB_SOURCE="ff_raw_metadata" SUB_DEST="ff_enrich" ./apply_xslt.sh
 ```
 
-Enrich the Solr Documents with the content from external PDFs, if available
+Merge the extra ff-metadata into the basic SolrXMLDocuments
+```
+PROJECT="ff" SUB_SOURCE1="solr_base" SUB_SOURCE2="ff_enrich" DEST="ff_merged" ./merge_solrdocs.sh
+```
+
+Fetch a JSON-breakdown of referenced PDFs, if available
+```
+PROJECT="ff" SUB_SOURCE="solr_base" SUB_DEST="pdf_json" RESOURCE_CHECK_FIELD="loar_resource" RESOURCE_CHECK_EXT=".xml" RESOURCE_FIELD="external_resource" RESOURCE_EXT="" URL_PREFIX="http://teg-desktop.sb.statsbiblioteket.dk:8080/loarindexer/services/pdfinfo?isAllowed=y&sequence=1&url=" ./fetch_resources.sh
+```
+
+Enrich the merged Solr Documents with the content from external PDFs, if available
 ```
 PROJECT="ff" SUB_SOURCE="ff_merged" ./pdf_enrich.sh
 ```
