@@ -20,6 +20,7 @@ fi
 
 : ${PROJECT:="$1"}
 : ${SUB_SOURCE:="solr_base"}
+: ${SUB_DEST:="pdf_enriched"}
 : ${PDF_TO_CHAPTERS="http://teg-desktop.sb.statsbiblioteket.dk:8080/loarindexer/services/pdfinfo?isAllowed=y&sequence=1&url="}
 : ${MAX_RECORDS:="99999999"}
 
@@ -50,14 +51,19 @@ enrich_single() {
     local T=$(mktemp)
     local RECORD="$1"
     local EXTERNAL="$2"
-    local DEST="../pdf_enriched/$RECORD"
+    local DEST="../${SUB_DEST}/$RECORD"
     local DEST_BASE="${DEST%.*}"
+
+    if [[ -s "$DEST" || -s "${DEST_BASE}_chapter_1.xml" ]]; then
+        echo "- Skipping already enriched $RECORD"
+        return
+    fi
     
     local R="${PDF_TO_CHAPTERS}${EXTERNAL}"
     curl -s "$R" > "$T"
 
     if [[ "." == .$(grep '"sections"' "$T") ]]; then
-        echo " - Could not PDF-parse $RECORD"
+        echo " - Could not PDF-parse. Copying as-is $RECORD"
         cp "$RECORD" "$DEST"
         return
     fi
@@ -92,7 +98,7 @@ enrich_single() {
 
 enrich() {
     pushd $PROJECT > /dev/null
-    mkdir -p pdf_enriched
+    mkdir -p ${SUB_DEST}
     cd $SUB_SOURCE
     COUNT=0
     for RECORD in *.xml; do
@@ -102,7 +108,7 @@ enrich() {
         if [[ "." == ".$PDF" ]]; then
             # TODO: Don't skip but make a skeleton record, marked with not having a PDF
             echo "Skipping enrichment og $RECORD as it has no PDF"
-            cp "$RECORD" "../pdf_enriched/$RECORD"
+            cp "$RECORD" "../${SUB_DEST}/$RECORD"
             continue
         fi
 
@@ -110,7 +116,7 @@ enrich() {
         if [[ "." == ".$EXTERNAL" ]]; then
             # TODO: Don't skip but make a skeleton record, marked with not having a PDF
             echo "Error: No external resource for $RECORD with PDF, skipping"
-            cp "$RECORD" "../pdf_enriched/$RECORD"
+            cp "$RECORD" "../${SUB_DEST}/$RECORD"
             continue
         fi
 
