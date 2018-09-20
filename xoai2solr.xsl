@@ -8,11 +8,11 @@
   <xsl:output version="1.0" encoding="UTF-8" indent="yes" method="xml" omit-xml-declaration="no"/>
   
   <xsl:template match="/">
-    <doc>
+    <add><doc>
       <xsl:for-each select="./*">
         <xsl:apply-templates/>
       </xsl:for-each>
-    </doc>
+    </doc></add>
   </xsl:template>
   
   <xsl:template match="record/header/identifier">
@@ -64,7 +64,7 @@
         <xsl:for-each select="xoai:element[@name='issued']">
           <xsl:for-each select="xoai:element"> <!-- language -->
             <xsl:for-each select="xoai:field[@name='value']">
-              <field name="cdate">
+              <field name="ctime">
                 <xsl:value-of select="."/><xsl:text>T00:00:00Z</xsl:text>
               </field>
             </xsl:for-each>
