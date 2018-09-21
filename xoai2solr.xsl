@@ -65,7 +65,14 @@
           <xsl:for-each select="xoai:element"> <!-- language -->
             <xsl:for-each select="xoai:field[@name='value']">
               <field name="ctime">
-                <xsl:value-of select="."/><xsl:text>T00:00:00Z</xsl:text>
+                <xsl:choose>
+                  <xsl:when test="string-length(.) = 4">
+                    <xsl:value-of select="."/><xsl:text>-01-01T00:00:00Z</xsl:text>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:value-of select="."/><xsl:text>T00:00:00Z</xsl:text>
+                  </xsl:otherwise>
+                </xsl:choose>
               </field>
             </xsl:for-each>
           </xsl:for-each>
