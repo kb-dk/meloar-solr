@@ -13,7 +13,8 @@ This schema is for Solr 7+ and will not work under Solr 6.
 
         <field name="loar_id"              type="string" />
         <field name="loar_uri"             type="string" />
-        <field name="case"                 type="string" />
+        <field name="case"                 type="text_general" multiValued="true" />
+        <field name="case_verbatim"        type="string" multiValued="true" />
         <field name="loar_resource"        type="string" multiValued="true" />
         <field name="external_resource"    type="string" multiValued="true" />
 
@@ -87,6 +88,8 @@ This schema is for Solr 7+ and will not work under Solr 6.
          to also search in those fields (edismax parser qf) -->
     <copyField source="author" dest="author_verbatim" />
     <copyField source="chapter" dest="chapter_verbatim" />
+    <copyField source="place_name" dest="place_name_verbatim" />
+    <copyField source="case" dest="case_verbatim" />
     
     <types>
         <fieldType name="string"   class="solr.StrField"         indexed="true"  docValues="true" stored="false" multiValued="false" sortMissingLast="true" />
