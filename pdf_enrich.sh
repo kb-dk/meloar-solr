@@ -51,6 +51,10 @@ check_parameters() {
 # FUNCTIONS
 ################################################################################
 
+encode() {
+    sed -e 's/\&/&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/g' -e 's/"/\&quot;/g' <<< "$1"
+}
+
 enrich_single() {
     local JSON="../$SUB_PDF_JSON/$RECORD"
     local RECORD="$1"
@@ -69,29 +73,37 @@ enrich_single() {
         return
     fi
 
-    TOTAL_CHAPTERS=$(jq -c '.sections[]' "$JSON" | jq -c 'select(.text != "")' | wc -l)
+    local TOTAL_CHAPTERS=$(jq -c '.sections[]' "$JSON" | jq -c 'select(.text != "")' | wc -l)
+    local AUTHORS=$(jq -r '.authors[]' "$JSON")
     CHAPTER_COUNT=0
+
+    echo "<update>" > "$DEST"
     while IFS=$'\n' read -r CHAPTER
     do
         CHAPTER_COUNT=$(( CHAPTER_COUNT+1 ))
-        local DEST="${DEST_BASE}_chapter_${CHAPTER_COUNT}.xml"
-        cat "$RECORD" | sed -e 's/\(<field name="id">[^<]\+\)\(<\/field>\)/\1_chapter_'$CHAPTER_COUNT'\2/' -e 's/<\/doc>//' -e 's/<\/add>//' > "$DEST"
+#        local DEST="${DEST_BASE}_chapter_${CHAPTER_COUNT}.xml"
+        cat "$RECORD" | sed -e 's/\(<field name="id">[^<]\+\)\(<\/field>\)/\1_chapter_'$CHAPTER_COUNT'\2/' -e 's/<\/doc>//' -e 's/<\/add>//' -e 's/<\/doc>//' -e 's/<\/add>//' >> "$DEST"
         echo "    <field name=\"chapter_id\">$CHAPTER_COUNT</field>" >> "$DEST"
         echo "    <field name=\"chapter_total\">$TOTAL_CHAPTERS</field>" >> "$DEST"
-        echo "    <field name=\"chapter\">$(jq .heading <<< "$CHAPTER")</field>" >> "$DEST"
+        echo "    <field name=\"chapter\">$(encode $(jq -r .heading <<< "$CHAPTER") )</field>" >> "$DEST"
         local PAGE=$(jq .pageNumber <<< "$CHAPTER")
         if [[ "." != ".$PAGE" ]]; then
             echo "    <field name=\"page\">$PAGE</field>" >> "$DEST"
         fi
-        
+        IFS=$'\n'
+        for AUTHOR in $AUTHORS; do
+            echo "    <field name=\"author\">$AUTHOR</field>" >> "$DEST"
+        done
+    
         while IFS=$'\n' read -r LINE
         do
             echo "    <field name=\"content\">$LINE</field>" >> "$DEST"
-        done <<< $(jq .text <<< "$CHAPTER" | sed 's/\\n/\n/g')
+        done <<< $(encode $(jq -r .text <<< "$CHAPTER" | sed 's/\\n/\n/g') )
         echo '    <field name="enriched">true</field>' >> "$DEST"
         echo '  </doc>' >> "$DEST"
         echo '</add>' >> "$DEST"
     done <<< $(jq -c '.sections[]' "$JSON" | jq -c 'select(.text != "")')
+    echo "</update>" >> "$DEST"
     if [[ "$CHAPTER_COUNT" -eq 0 ]]; then
         echo "- No text in $RECORD"
     else
@@ -104,11 +116,12 @@ enrich() {
     mkdir -p ${SUB_DEST}
     cd $SUB_SOURCE
     COUNT=0
+    local TOTAL=$(find . -iname "*.xml" | wc -l)
     for RECORD in *.xml; do
         COUNT=$((COUNT+1))
 
         if [[ -s "../$SUB_PDF_JSON/$RECORD" ]]; then
-            echo "$COUNT> Enriching record with chapters from external PDF for ${RECORD}"
+            echo -n "$COUNT/$TOTAL> " #Enriching record with chapters from external PDF for ${RECORD}"
             enrich_single "$RECORD"
         else
             echo "$COUNT> No PDF JSON available, copying record directly for ${RECORD}"
