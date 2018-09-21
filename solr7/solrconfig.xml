@@ -848,26 +848,29 @@
          chapter
        </str>     
        <str name="fl">*,score</str>
-       <str name="facet">false</str>
+       <str name="facet">true</str>
        <str name="facet.mincount">1</str>
        <str name="facet.limit">10</str>
        
-       <!-- Although we don't show facets per default, we want easy enabling of the common ones when
-            turning on faceting in the query -->
-       <str name="facet.field">chapter_varbatim</str>
-       <str name="facet.field">author_varbatim</str>
+       <str name="facet">true</str>
+       <str name="facet.field">author_verbatim</str>
+       <str name="facet.field">chapter_verbatim</str>
+       <str name="facet.field">case_verbatim</str>
+       <str name="facet.field">place_name_verbatim</str>
           
        <str name="hl">on</str>
        <str name="hl.requireFieldMatch">false</str>
        <str name="hl.encoder">html</str>
-       <str name="f.content.hl.preserveMulti">true</str>        
-       <str name="hl.fl">content</str>     
-          
+       <str name="f.content.hl.preserveMulti">false</str>        
+       <str name="hl.fl">author,title,chapter,content</str>     
+       <str name="hl.usePhraseHighlighter">true</str>     
+       <str name="hl.snippets">1</str>     
+       <str name="hl.maxMultiValuedToMatch">10</str><!-- Does not work!? -->
      </lst>
-      <arr name="last-components">
+<!--      <arr name="last-components">
       <str>highlight</str>
-   </arr>
-     
+   </arr>-->
+
     </requestHandler>
 
   
