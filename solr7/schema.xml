@@ -28,6 +28,7 @@ This schema is for Solr 7+ and will not work under Solr 6.
 
         <field name="place_name"           type="text_general" multiValued="true" />
         <field name="place_name_verbatim"  type="string" multiValued="true" />
+        <field name="place_coordinates"    type="location" />
 
         <field name="keyword"              type="string" multiValued="true" />
 
@@ -102,7 +103,7 @@ This schema is for Solr 7+ and will not work under Solr 6.
         <fieldType name="binary"   class="solr.BinaryField"      indexed="false" docValues="false" stored="true" multiValued="false" />
         <fieldType name="random"   class="solr.RandomSortField" />
         <fieldType name="point"    class="solr.PointType"        dimension="2" subFieldSuffix="_d" />
-        <fieldType name="location" class="solr.LatLonPointSpatialField" indexed="true" stored="false" docValues="true" multiValued="false" />
+        <fieldType name="location" class="solr.LatLonPointSpatialField" indexed="true" stored="true" docValues="true" multiValued="false" />
 
         <fieldType name="text_ws" class="solr.TextField" positionIncrementGap="100" indexed="true" stored="true" multiValued="false">
             <analyzer>

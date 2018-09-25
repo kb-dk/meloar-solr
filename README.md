@@ -89,9 +89,14 @@ PROJECT="ff" SUB_SOURCE="solr_base" SUB_DEST="ff_raw_metadata" RESOURCE_FIELD="l
 PROJECT="ff" XSLT="$(pwd)/ff2solr.xsl" SUB_SOURCE="ff_raw_metadata" SUB_DEST="ff_enrich" ./apply_xslt.sh
 ```
 
+Convert coordinates to OpenStreetMap/Solr/Google standard WGS 84
+```
+PROJECT="ff" SUB_SOURCE="ff_enrich" SUB_DEST="coordinates_converted" ./coordinate_convert.sh
+```
+
 Merge the extra ff-metadata into the basic SolrXMLDocuments
 ```
-PROJECT="ff" SUB_SOURCE1="solr_base" SUB_SOURCE2="ff_enrich" DEST="ff_merged" ./merge_solrdocs.sh
+PROJECT="ff" SUB_SOURCE1="solr_base" SUB_SOURCE2="coordinates_converted" SUB_DEST="ff_merged" ./merge_solrdocs.sh
 ```
 
 Fetch a JSON-breakdown of referenced PDFs, if available
