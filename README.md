@@ -1,5 +1,14 @@
 # meloar-solr
 
+## Prerequisites
+
+ - bash
+ - jq
+ - curl
+ - cs2cs
+ - Java 1.8
+
+
 ## Search backend for the MeLOAR project
 
 Indexes PDFs referenced in Open Access records from [LOAR](https://loar.kb.dk/) together with LOAR metadata and provides section-oriented search.
@@ -106,7 +115,7 @@ PROJECT="ff" SUB_SOURCE="solr_base" SUB_DEST="pdf_json" RESOURCE_CHECK_FIELD="lo
 
 Enrich the merged Solr Documents with the content from external PDFs, if available
 ```
-PROJECT="ff" SUB_SOURCE="ff_merged" ./pdf_enrich.sh
+PROJECT="ff" SUB_SOURCE="ff_merged" SUB_DEST="pdf_enriched" ./pdf_enrich.sh
 ```
 
 Index the generated documents into Solr
