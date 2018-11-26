@@ -122,3 +122,4 @@ Index the generated documents into Solr
 ```
 cloud/7.3.0/solr1/bin/post -p 9595 -c meloar ff/pdf_enriched/*
 ```
+
