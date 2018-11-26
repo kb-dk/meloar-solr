@@ -25,6 +25,7 @@ fi
 : ${RESOURCE_CHECK_EXT:=""}
 : ${URL_PREFIX:=""}
 : ${URL_POSTFIX:=""}
+: ${TIMEOUT:="600"} # curl timeout in seconds
 
 usage() {
     echo ""
@@ -81,7 +82,7 @@ fetch_external() {
         fi
         local URL="$URL_PREFIX$RESOURCE$URL_POSTFIX"
         echo "$COUNT/$TOTAL> Fetching resource for $RECORD: $URL"
-        curl -L -s "$URL" > "$DEST"
+        curl -m $TIMEOUT -L -s "$URL" > "$DEST"
     done
     popd > /dev/null
 }
