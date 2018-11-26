@@ -18,13 +18,49 @@
     </doc></add>
   </xsl:template>
   
+  <xsl:template match="ff:parishNo">
+    <xsl:for-each select="ff:term">
+      <xsl:if test="position() = last()">
+        <field name="ff_parish_s"><xsl:value-of select="."/></field>
+      </xsl:if>
+    </xsl:for-each>
+  </xsl:template>
+
+  <!-- admin area -->
+  <xsl:template match="ff:adminArea">
+    <xsl:for-each select="ff:municipality">
+      <xsl:for-each select="ff:term">
+        <field name="ff_adminarea_municipality_s"><xsl:value-of select="."/></field>
+      </xsl:for-each>
+    </xsl:for-each>
+
+    <xsl:for-each select="ff:museum">
+      <xsl:for-each select="ff:term">
+        <field name="ff_adminarea_museum_s"><xsl:value-of select="."/></field>
+      </xsl:for-each>
+    </xsl:for-each>
+    
+    <xsl:for-each select="ff:supervision">
+      <xsl:for-each select="ff:term">
+        <field name="ff_adminarea_supervision_s"><xsl:value-of select="."/></field>
+      </xsl:for-each>
+    </xsl:for-each>
+    
+  </xsl:template>
+  
   <!-- place name -->
   <xsl:template match="ff:placeNames">
+
     <xsl:for-each select="ff:placeName">
       <xsl:if test="position() = last()">
         <field name="place_name"><xsl:value-of select="ff:name"/></field>
+
+        <xsl:for-each select="ff:placeNameType">
+          <field name="ff_place_name_type_s"><xsl:value-of select="ff:term"/></field>
+        </xsl:for-each>
       </xsl:if>
     </xsl:for-each>
+
   </xsl:template>
   
   <!-- gml coordinates -->
@@ -37,24 +73,43 @@
 
   <!-- primary object -->
   <xsl:template match="ff:objects">
+
     <xsl:for-each select="ff:primaryObject">
 
       <xsl:for-each select="ff:text">
-        <field name="object_text_t"><xsl:value-of select="."/></field>
+        <field name="ff_primaryobject_text_t"><xsl:value-of select="."/></field>
       </xsl:for-each>
 
-      <xsl:for-each select="ff:from_year">
-        <field name="object_year_from_i"><xsl:value-of select="."/></field>
-      </xsl:for-each>
-
-      <xsl:for-each select="ff:to_year">
-        <field name="object_year_to_i"><xsl:value-of select="."/></field>
+      <xsl:for-each select="ff:date">
+        <xsl:for-each select="ff:fromYear">
+          <field name="ff_primaryobject_year_from_i"><xsl:value-of select="."/></field>
+        </xsl:for-each>
+        <xsl:for-each select="ff:toYear">
+          <field name="ff_primaryobject_year_to_i"><xsl:value-of select="."/></field>
+        </xsl:for-each>
+        <xsl:for-each select="ff:mainPeriod">
+          <field name="ff_primaryobject_mainperiod_s"><xsl:value-of select="."/></field>
+        </xsl:for-each>
+        <xsl:for-each select="ff:period">
+          <xsl:for-each select="ff:term">
+            <field name="ff_primaryobject_period_term_s"><xsl:value-of select="."/></field>
+          </xsl:for-each>
+          <xsl:for-each select="ff:publicTerm">
+            <field name="ff_primaryobject_period_publicterm_s"><xsl:value-of select="."/></field>
+          </xsl:for-each>
+        </xsl:for-each>
       </xsl:for-each>
 
       <xsl:for-each select="ff:objectType">
         <xsl:for-each select="ff:term">
-          <field name="object_type_s"><xsl:value-of select="."/></field>
-      </xsl:for-each>
+          <field name="ff_primaryobject_type_term_s"><xsl:value-of select="."/></field>
+        </xsl:for-each>
+        <xsl:for-each select="ff:objectClassTerm">
+          <field name="ff_primaryobject_type_class_term_s"><xsl:value-of select="."/></field>
+        </xsl:for-each>
+        <xsl:for-each select="ff:objectClassExplanation">
+          <field name="ff_primaryobject_type_class_explanation_s"><xsl:value-of select="."/></field>
+        </xsl:for-each>
       </xsl:for-each>
 
     </xsl:for-each>
@@ -63,10 +118,26 @@
   <!-- case number -->
   <xsl:template match="ff:events">
     <xsl:for-each select="ff:event">
+
       <xsl:for-each select="ff:caseNo">
         <field name="case"><xsl:value-of select="."/></field>
       </xsl:for-each>
+
+      <xsl:for-each select="ff:institution">
+        <xsl:for-each select="ff:term">
+          <field name="ff_events_institution_ss"><xsl:value-of select="."/></field>
+        </xsl:for-each>
+      </xsl:for-each>
+
+      <xsl:for-each select="ff:texts">
+        <xsl:for-each select="ff:text">
+          <xsl:for-each select="ff:freeText">
+            <field name="ff_events_text_ts"><xsl:value-of select="."/></field>
+          </xsl:for-each>
+        </xsl:for-each>
+      </xsl:for-each>
     </xsl:for-each>
+   
   </xsl:template>
 
 </xsl:stylesheet>
