@@ -75,7 +75,7 @@ enrich_single() {
 
     local TOTAL_CHAPTERS=$(jq -c '.sections[]' "$JSON" | jq -c 'select(.text != "")' | wc -l)
     local AUTHORS=$(jq -r '.authors[]' "$JSON")
-    CHAPTER_COUNT=0
+    local CHAPTER_COUNT=0
 
     echo "<update>" > "$DEST"
     while IFS=$'\n' read -r CHAPTER
