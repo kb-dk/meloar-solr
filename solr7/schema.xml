@@ -41,6 +41,10 @@ This schema is for Solr 7+ and will not work under Solr 6.
         
         <field name="content"              type="text_general" multiValued="true" />
 
+        <!-- The year associated with the material -->
+        <field name="year"                 type="int" />
+
+        
         <!-- The time of document indexing. Set automatically by Solr.
              Sample use: Freezing a query result even when new documents are added to the index:
                          q=foo&fq=index_time:[* TO 2018-05-16T10:33:00Z]
