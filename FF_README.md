@@ -41,12 +41,13 @@ PROJECT="ff" SUB_SOURCE="ff_merged" SUB_DEST="pdf_enriched" ./pdf_enrich.sh
 cloud/7.3.0/solr1/bin/post -p 9595 -c meloar ff/pdf_enriched/*
 ```
 
+
 ## Notes
 
 Special FF-fields in Solr (`grep -o 'ff_.*' ff2solr.xsl | cut -d\" -f1)):
 
 ```
-ff_parish_s
+ff_parish_ss
 ff_adminarea_municipality_s
 ff_adminarea_museum_s
 ff_adminarea_supervision_s
