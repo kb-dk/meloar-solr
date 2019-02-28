@@ -21,7 +21,7 @@
   <xsl:template match="ff:parishNo">
     <xsl:for-each select="ff:term">
       <xsl:if test="position() = last()">
-        <field name="ff_parish_s"><xsl:value-of select="."/></field>
+        <field name="ff_parish_ss"><xsl:value-of select="."/></field>
       </xsl:if>
     </xsl:for-each>
   </xsl:template>
