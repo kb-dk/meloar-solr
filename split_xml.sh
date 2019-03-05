@@ -66,7 +66,7 @@ split_xml() {
     # Source files
     while read -r FILE; do
         grep -m 1 -B 99999 "$BODY_START_REGEXP" $FILE | head -n -1 > $HEADER
-        grep -A 99999 "$BODY_START_REGEXP" $FILE > $BODY
+        grep -A 99999 "$BODY_START_REGEXP" $FILE | grep -B 9999 "$ELEMENT_END_REGEXP" > $BODY
         
         (cat $FILE ; echo "" )| tac | grep -m 1 -B 9999 "$ELEMENT_END_REGEXP" | tac | tail -n +2 > $FOOTER
 
