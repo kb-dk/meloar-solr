@@ -23,7 +23,7 @@
       <xsl:value-of select="translate(concat(.,'&#xA;'),'&#x0d;&#x0a;', '')"/>
     
       <xsl:choose>
-        <xsl:when test="$next = 'hi'">
+        <xsl:when test="$next = 'hi' or $next = 'seg' or $next = 're' or $next = 'persName'">
           <xsl:text> </xsl:text>
         </xsl:when>
         <xsl:otherwise>
@@ -32,10 +32,23 @@
         </xsl:otherwise>
       </xsl:choose>
     </field>
+          <xsl:text>
+</xsl:text>
+  </xsl:template>
+
+  <xsl:template match="tei:text/tei:body//tei:p">
+    <field name="content">
+      <xsl:for-each select="*//text()">
+        <xsl:value-of select="translate(concat(.,'&#xA;'),'&#x0d;&#x0a;', '')"/>
+          <xsl:text> </xsl:text>
+      </xsl:for-each>
+    </field>
+          <xsl:text>
+</xsl:text>
   </xsl:template>
 
   <xsl:template match="tei:teiHeader//tei:titleStmt/tei:title">
-    <xsl:if test="not(@type='sub') and not(@rend='shortForm')">
+    <xsl:if test="not(@type='sub') and not(@rend='shortForm') and not(@rend='partForm')">
     <field name="title">
       <xsl:value-of select="."/>
     </field><xsl:text>
@@ -53,17 +66,17 @@
   <xsl:template match="tei:teiHeader//tei:publicationStmt/tei:date">
     <field name="ctime">
       <xsl:choose>
-        <xsl:when test="string-length(.) = 4">
-          <xsl:value-of select="."/><xsl:text>-01-01T00:00:00Z</xsl:text>
+        <xsl:when test="string-length(@when) = 4">
+          <xsl:value-of select="@when"/><xsl:text>-01-01T00:00:00Z</xsl:text>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:value-of select="."/><xsl:text>T00:00:00Z</xsl:text>
+          <xsl:value-of select="@when"/><xsl:text>T00:00:00Z</xsl:text>
         </xsl:otherwise>
       </xsl:choose>
     </field><xsl:text>
 </xsl:text>
     <field name="year">
-      <xsl:value-of select="substring(., 1, 4)"/>
+      <xsl:value-of select="substring(@when, 1, 4)"/>
       </field><xsl:text>
 </xsl:text>
   </xsl:template>
