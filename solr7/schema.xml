@@ -11,6 +11,8 @@ This schema is for Solr 7+ and will not work under Solr 6.
         <field name="_root_" type="string" indexed="true" stored="true" docValues="true"/>
         <field name="_text_" type="text_general" multiValued="true" /> <!-- Isn't this only used for schema-less? -->
 
+        <field name="collection"           type="string" /> <!-- aka recordBase aka target: fof, kirker, ... -->
+
         <field name="loar_id"              type="string" />
         <field name="loar_uri"             type="string" />
         <field name="case"                 type="text_general" multiValued="true" />
