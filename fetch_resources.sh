@@ -26,6 +26,9 @@ fi
 : ${URL_PREFIX:=""}
 : ${URL_POSTFIX:=""}
 : ${TIMEOUT:="600"} # curl timeout in seconds
+: ${ALLOW_MULTI:="false"}
+
+. ./meloar_common.sh
 
 usage() {
     echo ""
@@ -58,9 +61,9 @@ fetch_external() {
     local COUNT=0
     for RECORD in *.xml; do
         COUNT=$(( COUNT+1 ))
-        local DEST="../$SUB_DEST/${RECORD}"
-        if [[ -s "$DEST" ]]; then
-            echo "$COUNT/$TOTAL> Already fetched resource for $RECORD"
+        local DEST=../$SUB_DEST/$(resolve_analyzed_filename_base "$RECORD")
+        if [[ -s "$DEST" || -s "${DEST}.1" ]]; then
+            echo "$COUNT/$TOTAL> Already fetched resource ${DEST}* for $RECORD"
             continue
         fi
         if [[ "." != ".$RESOURCE_CHECK_FIELD" ]]; then
@@ -75,14 +78,33 @@ fetch_external() {
             echo "$COUNT/$TOTAL> No $RESOURCE_FIELD field with extension $RESOURCE_EXT in $RECORD"
             continue
         fi
-        if [[ $(wc -l <<< "$RESOURCE") -gt 1 ]]; then
-            echo "$COUNT/$TOTAL> Multiple $RESOURCE_FIELD with extension $RESOURCE_EXT in $RECORD - only the first will be fetched"
-            echo "$RESOURCE"
-            RESOURCE=$(head -n 1 <<< "$RESOURCE")
+        if [[ "$ALLOW_MULTI" == "false" ]]; then
+            if [[ $(wc -l <<< "$RESOURCE") -gt 1 ]]; then
+                echo "$COUNT/$TOTAL> Multiple $RESOURCE_FIELD with extension $RESOURCE_EXT in $RECORD - only the first will be fetched"
+                echo "$RESOURCE"
+                RESOURCE=$(head -n 1 <<< "$RESOURCE")
+            fi
+            local URL="$URL_PREFIX$RESOURCE$URL_POSTFIX"
+            echo "$COUNT/$TOTAL> Fetching resource for $RECORD: $URL"
+            curl -m $TIMEOUT -L -s "$URL" > "${DEST}.1"
+            if [[ ! -s "${DEST}.1" ]]; then
+                >&2 echo "Error: Unable to fetch $URL"
+                rm -r "${DEST}.1"
+            fi
+        else
+            local RCOUNT=1
+            while read -r RES; do
+                local URL="$URL_PREFIX$RES${URL_POSTFIX}"
+                local CDEST="${DEST}.$RCOUNT"
+                echo "$COUNT/$TOTAL> Fetching resource $CDEST for $RECORD: $URL"
+                curl -m $TIMEOUT -L -s "$URL" > "$CDEST"
+                if [[ ! -s "$CDEST" ]]; then
+                    >&2 echo "Error: Unable to fetch $URL"
+                    rm -r "$CDEST"
+                fi
+                RCOUNT=$((RCOUNT+1))
+            done <<< "$RESOURCE"
         fi
-        local URL="$URL_PREFIX$RESOURCE$URL_POSTFIX"
-        echo "$COUNT/$TOTAL> Fetching resource for $RECORD: $URL"
-        curl -m $TIMEOUT -L -s "$URL" > "$DEST"
     done
     popd > /dev/null
 }

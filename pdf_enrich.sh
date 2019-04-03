@@ -23,6 +23,9 @@ fi
 : ${SUB_PDF_JSON:="pdf_json"}
 : ${SUB_DEST:="pdf_enriched"}
 : ${MAX_RECORDS:="99999999"}
+: ${COLLECTION:=""} # If defined, the field collection will be added with this value
+
+. ./meloar_common.sh
 
 usage() {
     echo ""
@@ -55,37 +58,22 @@ encode() {
     sed -e 's/\&/&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/g' -e 's/"/\&quot;/g' <<< "$1"
 }
 
-enrich_single() {
-    local JSON="../$SUB_PDF_JSON/$RECORD"
-    local RECORD="$1"
-    local EXTERNAL="$2"
-    local DEST="../${SUB_DEST}/$RECORD"
-    local DEST_BASE="${DEST%.*}"
-
-    if [[ -s "$DEST" || -s "${DEST_BASE}_chapter_1.xml" ]]; then
-        echo "- Skipping already enriched $RECORD"
-        return
-    fi
-    
-    if [[ "." == .$(grep '"sections"' "$JSON") ]]; then
-        echo " - Could not PDF-parse. Copying as-is $RECORD"
-        cp "$RECORD" "$DEST"
-        return
-    fi
-
-    local TOTAL_CHAPTERS=$(jq -c '.sections[]' "$JSON" | jq -c 'select(.text != "")' | wc -l)
-    local AUTHORS=$(jq -r '.authors[]' "$JSON")
+produce_solr_documents() {
+    # TODO: Isolate external resource based on ANALYZABLE_COUNT
     local CHAPTER_COUNT=0
-
     echo "<update>" > "$DEST"
     while IFS=$'\n' read -r CHAPTER
     do
         CHAPTER_COUNT=$(( CHAPTER_COUNT+1 ))
-#        local DEST="${DEST_BASE}_chapter_${CHAPTER_COUNT}.xml"
-        cat "$RECORD" | sed -e 's/\(<field name="id">[^<]\+\)\(<\/field>\)/\1_chapter_'$CHAPTER_COUNT'\2/' -e 's/<\/doc>//' -e 's/<\/add>//' -e 's/<\/doc>//' -e 's/<\/add>//' >> "$DEST"
+        #local DEST="${DEST_BASE}_chapter_${CHAPTER_COUNT}.xml"
+        sans_analyzable_externals "$RECORD" | sed -e 's/\(<field name="id">[^<]\+\)\(<\/field>\)/\1_document_'$ANALYZABLE_COUNT'_chapter_'$CHAPTER_COUNT'\2/' -e 's/<\/doc>//' -e 's/<\/add>//' -e 's/<\/doc>//' -e 's/<\/add>//' >> "$DEST"
+        if [[ "." != ".$COLLECTION" ]]; then
+            echo "    <field name=\"collection\">$COLLECTION</field>" >> "$DEST"
+        fi
         echo "    <field name=\"chapter_id\">$CHAPTER_COUNT</field>" >> "$DEST"
         echo "    <field name=\"chapter_total\">$TOTAL_CHAPTERS</field>" >> "$DEST"
         echo "    <field name=\"chapter\">$(encode $(jq -r .heading <<< "$CHAPTER") )</field>" >> "$DEST"
+        echo "    <field name=\"external_resource\">$(encode "$ANALYZABLE" )</field>" >> "$DEST"
         local PAGE=$(jq .pageNumber <<< "$CHAPTER")
         if [[ "." != ".$PAGE" ]]; then
             echo "    <field name=\"page\">$PAGE</field>" >> "$DEST"
@@ -104,6 +92,7 @@ enrich_single() {
         echo '</add>' >> "$DEST"
     done <<< $(jq -c '.sections[]' "$JSON" | jq -c 'select(.text != "")')
     echo "</update>" >> "$DEST"
+
     if [[ "$CHAPTER_COUNT" -eq 0 ]]; then
         echo "- No text in $RECORD"
     else
@@ -111,22 +100,62 @@ enrich_single() {
     fi
 }
 
+enrich_single() {
+    local RECORD="$1"
+    local JSON="$2"
+    local ANALYZABLE_COUNT="$3"
+    
+    local FALLBACK_DEST="../${SUB_DEST}/${RECORD}"
+    local DEST="${FALLBACK_DEST%.*}.${ANALYZABLE_COUNT}.xml"
+
+    # We don't check fallback as that would mess up the multi-analyzable-resource handling
+    if [[ -s "$DEST" ]]; then
+        echo "- Skipping already enriched $RECORD due to existing $DEST"
+        return
+    fi
+    
+    if [[ "." == .$(grep '"sections"' "$JSON") ]]; then
+        echo " - Could not PDF-parse. Copying as-is $RECORD"
+        cp "$RECORD" "$DEST"
+        return
+    fi
+
+    local TOTAL_CHAPTERS=$(jq -c '.sections[]' "$JSON" | jq -c 'select(.text != "")' | wc -l)
+    local AUTHORS=$(jq -r '.authors[]' "$JSON")
+
+    produce_solr_documents
+}
+
 enrich() {
     pushd $PROJECT > /dev/null
     mkdir -p ${SUB_DEST}
     cd $SUB_SOURCE
-    COUNT=0
+    local COUNT=0
     local TOTAL=$(find . -iname "*.xml" | wc -l)
     for RECORD in *.xml; do
         COUNT=$((COUNT+1))
+        local ANALYZED_BASE=$(resolve_analyzed_filename_base "$RECORD")
+        local ANALYZABLES=$(get_analyzable_externals "$RECORD")
 
-        if [[ -s "../$SUB_PDF_JSON/$RECORD" ]]; then
-            echo -n "$COUNT/$TOTAL> " #Enriching record with chapters from external PDF for ${RECORD}"
-            enrich_single "$RECORD"
-        else
-            echo "$COUNT> No PDF JSON available, copying record directly for ${RECORD}"
+        local FOUND_ONE=false
+        local ANALYZABLE_COUNT=1
+        for ANALYZABLE in $ANALYZABLES; do
+            local ANALYZED_RESULT="../$SUB_PDF_JSON/${ANALYZED_BASE}.${ANALYZABLE_COUNT}"
+            if  [[ ! -s "$ANALYZED_RESULT" ]]; then
+                >&2 echo "Warning: No analyzed data for $ANALYZABLE referred by $RECORD"
+                continue
+            fi
+            FOUND_ONE=true
+            echo -n "$COUNT/$TOTAL #$ANALYZABLE_COUNT> " #Enriching record with chapters from external PDF for ${RECORD}"
+            enrich_single "$RECORD" "$ANALYZED_RESULT" $ANALYZABLE_COUNT
+            ANALYZABLE_COUNT=$(( ANALYZABLE_COUNT + 1 ))
+        done
+        
+        if [[ "false" == "$FOUND_ONE" ]]; then
+            echo "$COUNT> No external analyzables available, copying record directly for ${RECORD}"
             cp "$RECORD" "../$SUB_DEST"
         fi
+            
         if [[ "$COUNT" -eq "$MAX_RECORDS" ]]; then
             break
         fi
