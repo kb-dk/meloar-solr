@@ -18,6 +18,9 @@ fi
 : ${CHURCH_LIST_URL:="http://danmarkskirker.natmus.dk/laes-online/alle-beskrevne-kirker/"}
 : ${PROJECT:="kirker"}
 : ${OPENSTREETMAP_PROVIDER:="https://nominatim.openstreetmap.org"}
+: ${MAX_RETRIES:="5"}
+: ${DELAY_BETWEEN_RETRIES:="20"}
+: ${DELAY_BETWEEN_REQUESTS:="2"}
 
 usage() {
     echo ""
@@ -75,8 +78,20 @@ resolve_coordinates() {
     local QUERY="$1"
     local QUERY=$(sed -e 's/Skt./Sankt/' -e 's/†//' -e 's/ /+/g' <<< "$QUERY")
     local DEST="$2"
-    if [[ ! -s "$DEST" || ".[]" == .$(cat "$DEST") ]]; then
-        curl -s "${OPENSTREETMAP_PROVIDER}/search?format=json&q=${QUERY}" > "$DEST"
+    if [[ ! -s "$DEST" || ".[]" == .$(cat "$DEST") || "." != .$(grep 'You have been temporarily blocked' < "$DEST") ]]; then
+        sleep $DELAY_BETWEEN_REQUESTS
+        local ATTEMPT=1
+        while [[ "$ATTEMPT" -le "$MAX_RETRIES" ]]; do
+            curl -s "${OPENSTREETMAP_PROVIDER}/search?format=json&q=${QUERY}" > "$DEST"
+            if [[ "." == .$(grep 'You have been temporarily blocked' < "$DEST") ]]; then
+                break
+            fi
+            if [[ "$ATTEMPT" -ne "$MAX_RETRIES" ]]; then
+                >&2 echo "Temporarily blocked while geo-searching '$QUERY'. Sleeping ${DELAY_BETWEEN_RETRIES} seconda and retrying"
+                sleep $DELAY_BETWEEN_RETRIES
+            fi
+            ATTEMPT=$(( ATTEMPT+1 ))
+        done
         if [[ ! -s "$DEST" || ".[]" == .$(cat "$DEST") ]]; then
             >&2 echo "Unable to resolve coordinates with '${OPENSTREETMAP_PROVIDER}/search?format=json&q=${QUERY}'"
             rm -f "$DEST"
@@ -95,6 +110,14 @@ get_single_church_metadata() {
     local CHURCH_XML="$PROJECT/xml/${CHURCH_BASE}.xml"
     local CHURCH_OSM="$PROJECT/osm/${CHURCH_BASE}.json"
 
+    if [[ -s "$CHURCH_XML" ]]; then
+        echo "Exists: $CHURCH_XML"
+        if [[ "." != .$(grep "place_coordinates" "$CHURCH_XML") ]]; then
+            return
+        fi
+    fi
+    echo "Processing $CHURCH_XML"
+    
     mkdir -p "$PROJECT/raw"
     mkdir -p "$PROJECT/osm"
    
@@ -113,7 +136,13 @@ get_single_church_metadata() {
     local ADDRESS=$(qualified_paragraph "$CHURCH_RAW" "address")
     local ZIP_CITY=$(qualified_paragraph "$CHURCH_RAW" "zipcity")
     local ZIP_ONLY=$(grep -o "[0-9][0-9][0-9][0-9]" <<< "$ZIP_CITY")
+
     local COORDINATES=$(resolve_coordinates "${TITLE}, ${ZIP_ONLY}" "$CHURCH_OSM")
+
+    if [[ "." == ".$COORDINATES" && "." != ".$ADDRESS" ]]; then
+        echo "Falling back to resolving geo-coordinates from '${ADDRESS}, ${ZIP_ONLY}'"
+        local COORDINATES=$(resolve_coordinates "${ADDRESS}, ${ZIP_ONLY}" "$CHURCH_OSM")
+    fi
     
     if [[ "1" == "2" ]]; then
         #{id:"kirke_soenderjyllands-amt_arrild-kirke", title:"Arrild Kirke", external_resource:"http://danmarkskirker.natmus.dk/uploads/tx_tcchurchsearch/Sjyll_0031-0046.pdf", external_resource:"http://danmarkskirker.natmus.dk/uploads/tx_tcchurchsearch/Sjyll_2613-2652.pdf", external_resource:"http://danmarkskirker.natmus.dk/uploads/tx_tcchurchsearch/Sjyll_1264-1280_01.pdf", place_name:"Hviding Herred", place_name:"Tønder Amt", place_name:"Arnumvej 24, Arrild"}

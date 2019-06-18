@@ -19,3 +19,7 @@ but a more complete solution is `kirker_harvest.sh` which adds geo coordinates a
 The records for Danmarks kirker often refers to two or more PDFs. Such records are split into chapter-based SolrDocument, sharing the same LOAR-id, but referring to different PDFs.
 
 Harvesting from LOAR and enhancing with PDF-content is done with `kirker.sh`.
+
+## Resolving missing coordinates
+
+`grep -L place_coordinates kirker/xml/*`
