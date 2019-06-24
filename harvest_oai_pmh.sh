@@ -128,6 +128,7 @@ harvest_resumption() {
 ###############################################################################
 
 check_parameters "$@"
+echo "Harvesting from $SET to $PROJECT"
 if [[ "true" == "$USE_RESUMPTION" ]]; then
     harvest_resumption
 else
