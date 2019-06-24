@@ -28,6 +28,11 @@ fi
 : ${TIMEOUT:="600"} # curl timeout in seconds
 : ${ALLOW_MULTI:="false"}
 
+: ${OVERWRITE_IF_NO_TEXT:="true"}
+: ${NO_TEXT_LIMIT:="10"} # The amount of text that is considered "no text"
+: ${BLACKLIST:=""}
+: ${RECORD_CALLBACK:=""}
+
 . ./meloar_common.sh
 
 usage() {
@@ -61,11 +66,32 @@ fetch_external() {
     local COUNT=0
     for RECORD in *.xml; do
         COUNT=$(( COUNT+1 ))
-        local DEST=../$SUB_DEST/$(resolve_analyzed_filename_base "$RECORD")
-        if [[ -s "$DEST" || -s "${DEST}.1" ]]; then
-            echo "$COUNT/$TOTAL> Already fetched resource ${DEST}* for $RECORD"
+
+        if [[ "." != ".$BLACKLIST" && "." != .$(grep -f "$BLACKLIST" <<< "$RECORD") ]]; then
+            echo "$COUNT/$TOTAL> Skipping blacklisted $RECORD"
             continue
         fi
+        
+        local DEST=../$SUB_DEST/$(resolve_analyzed_filename_base "$RECORD")
+        local EXISTING=""
+        if [[ -s "$DEST" ]]; then
+            local EXISTING="$DEST"
+        elif [[ -s "${DEST}.1" ]]; then
+            local EXISTING="${DEST}.1"
+        fi
+        if [[ -s "$EXISTING" ]]; then
+            if [[ "true" == "$OVERWRITE_IF_NO_TEXT" && $(jq -r '.sections[].text' "$EXISTING" | tr -d '\n' | tr -d ' ' | wc -c) -le "$NO_TEXT_LIMIT" ]]; then
+                echo "$COUNT/$TOTAL> Overwriting previously fetched resource ${DEST}* for $RECORD as it does not contain any text"
+            else
+                echo "$COUNT/$TOTAL> Already fetched ${EXISTING}* for $RECORD"
+                continue
+            fi
+        fi
+
+        if [[ . != ."$RECORD_CALLBACK" ]]; then
+            $RECORD_CALLBACK "$RECORD"
+        fi
+        
         if [[ "." != ".$RESOURCE_CHECK_FIELD" ]]; then
             local RESOURCE_CHECK=$(grep "<field name=\"$RESOURCE_CHECK_FIELD\">[^<]\+${RESOURCE_CHECK_EXT}</field>" "$RECORD" | sed 's/.*>\([^<]\+\)<.*/\1/')
             if [[ "." == ".$RESOURCE_CHECK" ]]; then
@@ -78,6 +104,7 @@ fetch_external() {
             echo "$COUNT/$TOTAL> No $RESOURCE_FIELD field with extension $RESOURCE_EXT in $RECORD"
             continue
         fi
+
         if [[ "$ALLOW_MULTI" == "false" ]]; then
             if [[ $(wc -l <<< "$RESOURCE") -gt 1 ]]; then
                 echo "$COUNT/$TOTAL> Multiple $RESOURCE_FIELD with extension $RESOURCE_EXT in $RECORD - only the first will be fetched"
