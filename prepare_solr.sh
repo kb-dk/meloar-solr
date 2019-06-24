@@ -40,10 +40,10 @@ check_parameters() {
 ################################################################################
 
 prepare_solr() {
-    $SOLRSCRIPTS/cloud_install.sh
-    $SOLRSCRIPTS/cloud_start.sh
-    $SOLRSCRIPTS/cloud_sync.sh "$SOLR_CONFIG_FOLDER" "$SOLR_CONFIG_NAME" "$INDEX"
-    $SOLRSCRIPTS/cloud_alias.sh "$COLLECTION" "$INDEX"
+    $SOLR_SCRIPTS/cloud_install.sh
+    $SOLR_SCRIPTS/cloud_start.sh
+    $SOLR_SCRIPTS/cloud_sync.sh "$SOLR_CONFIG_FOLDER" "$SOLR_CONFIG_NAME" "$INDEX"
+    $SOLR_SCRIPTS/cloud_alias.sh "$PROJECT" "$INDEX"
 }
 
 ###############################################################################
