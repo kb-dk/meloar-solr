@@ -33,7 +33,7 @@ resolve_analyzed_filename_base() {
         local DEST=$(sed "s/$RESOURCE_NAME_PRUNE_REGEXP//" <<< "$DEST")
     fi
     if [[ "." == ".$DEST" ]]; then
-        >&2 echo "Error: Could not derive resource filename from field ${RESOURCE_NAME_FIELD}. Using fallback to record name"
+        >&2 echo "Error: Could not derive resource filename from field '${RESOURCE_NAME_FIELD}'. Using fallback to record name: ${RECORD}"
         local DEST="${RECORD}"
     fi
     echo "$DEST"
