@@ -120,8 +120,13 @@ enrich_single() {
         return
     fi
 
-    local TOTAL_CHAPTERS=$(jq -c '.sections[]' "$JSON" | jq -c 'select(.text != "")' | wc -l)
-    local AUTHORS=$(jq -r '.authors[]' "$JSON")
+    TOTAL_CHAPTERS=$(jq -c '.sections[]' "$JSON" | jq -c 'select(.text != "")' | wc -l)
+    AUTHORS=$(jq -r '.authors' "$JSON")
+    if [[ "null" == "$AUTHORS" ]]; then
+        AUTHORS=""
+    else
+        AUTHORS=$(jq -r '.authors[]' "$JSON")
+    fi
 
     produce_solr_documents
 }
