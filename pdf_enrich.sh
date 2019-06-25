@@ -86,7 +86,8 @@ produce_solr_documents() {
         while IFS=$'\n' read -r LINE
         do
             echo "    <field name=\"content\">$LINE</field>" >> "$DEST"
-        done <<< $(encode $(jq -r .text <<< "$CHAPTER" | sed 's/\\n/\n/g') )
+        done <<< $(encode "$(jq -r .text <<< "$CHAPTER" | tr '\n' ' ')" )
+#        done <<< $(encode $(jq -r .text <<< "$CHAPTER" | sed 's/\\n/\n/g') )
         echo '    <field name="enriched">true</field>' >> "$DEST"
         echo '  </doc>' >> "$DEST"
         echo '</add>' >> "$DEST"
