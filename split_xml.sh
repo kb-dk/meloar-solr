@@ -25,6 +25,9 @@ fi
 : ${ELEMENT_END_REGEXP:="</div>"}
 : ${BODY_START_REGEXP:="<body.*"}
 
+: ${SKIP_HEADER:="false"}
+: ${SKIP_FOOTER:="false"}
+
 usage() {
     echo "Usage: ./split_xml.sh <project>"
     echo ""
@@ -65,14 +68,20 @@ split_xml() {
 
     # Source files
     while read -r FILE; do
-        grep -m 1 -B 99999 "$BODY_START_REGEXP" $FILE | head -n -1 > $HEADER
+        if [[ "false" == "$SKIP_HEADER" ]]; then
+            grep -m 1 -B 99999 "$BODY_START_REGEXP" $FILE | head -n -1 > $HEADER
+        fi
         grep -A 99999 "$BODY_START_REGEXP" $FILE | grep -B 9999 "$ELEMENT_END_REGEXP" > $BODY
-        
-        (cat $FILE ; echo "" )| tac | grep -m 1 -B 9999 "$ELEMENT_END_REGEXP" | tac | tail -n +2 > $FOOTER
 
+        if [[ "false" == "$SKIP_FOOTER" ]]; then
+            (cat $FILE ; echo "" )| tac | grep -m 1 -B 9999 "$ELEMENT_END_REGEXP" | tac | tail -n +2 > $FOOTER
+        fi
+        
         mkdir -p temp_split
         csplit -s --prefix temp_split/ -n 5 $BODY "/$ELEMENT_START_REGEXP/" "{*}"
-        cat temp_split/00000 >> $HEADER
+        if [[ "false" == "$SKIP_HEADER" ]]; then
+            cat temp_split/00000 >> $HEADER
+        fi
         rm temp_split/00000
         
         local DEST_BASE=$(basename $FILE)
@@ -87,7 +96,7 @@ split_xml() {
             cat $FOOTER >> "$DEST_FILE"
             COUNTER=$((COUNTER+1))
         done <<< $(ls temp_split/*)
-        echo "- $DEST_FILE ($((COUNTER-1)) divs)"
+        echo "- $DEST_FILE ($((COUNTER-1)) elements)"
         rm -r temp_split
 #    done <<< $(echo 0_raw/1842_477B_noLG.xml)
     done <<< $(find $SUB_SOURCE -type f)
