@@ -68,6 +68,10 @@ convert_records() {
     mkdir -p "$SUB_DEST"
     cd "$SUB_SOURCE"
     for RECORD in *.xml; do
+        if [[ ! -s "$RECORD" ]]; then
+            >&2 echo " - Skipping $RECORD as it is empty"
+            continue
+        fi
         local BASE=${RECORD%.*}
         xsltproc "$XSLT" "$RECORD" | xmllint --format - | grep -v '<[?]xml ' > "../${SUB_DEST}/${BASE}.xml"
     done
