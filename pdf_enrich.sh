@@ -24,6 +24,7 @@ fi
 : ${SUB_DEST:="pdf_enriched"}
 : ${MAX_RECORDS:="99999999"}
 : ${COLLECTION:=""} # If defined, the field collection will be added with this value
+: ${SKIP_PAGES:=""} # space separated list of the pages to skip, e.g. "1 2"
 
 . ./meloar_common.sh
 
@@ -48,6 +49,7 @@ check_parameters() {
         >&2 echo "Error: No PDF_JSON folder $PROJECT/$SUB_PDF_JSON"
         usage 6
     fi
+    SKIP_PAGES_SPACED=" $SKIP_PAGES "
 }
 
 ################################################################################
@@ -64,6 +66,13 @@ produce_solr_documents() {
     echo "<update>" > "$DEST"
     while IFS=$'\n' read -r CHAPTER
     do
+        local PAGE=$(jq .pageNumber <<< "$CHAPTER")
+        if [[ "." != ".$PAGE" && "." != ".$SKIP_PAGES" ]]; then
+            if [[ "." != .$(grep " $PAGE " <<< "$SKIP_PAGES_SPACED") ]]; then
+#                >&2 echo " Skipping page $PAGE"
+                continue
+            fi
+        fi
         CHAPTER_COUNT=$(( CHAPTER_COUNT+1 ))
         #local DEST="${DEST_BASE}_chapter_${CHAPTER_COUNT}.xml"
         sans_analyzable_externals "$RECORD" | sed -e 's/\(<field name="id">[^<]\+\)\(<\/field>\)/\1_document_'$ANALYZABLE_COUNT'_chapter_'$CHAPTER_COUNT'\2/' -e 's/<\/doc>//' -e 's/<\/add>//' -e 's/<\/doc>//' -e 's/<\/add>//' >> "$DEST"
