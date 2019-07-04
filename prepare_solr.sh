@@ -17,7 +17,7 @@ fi
 : ${SOLR_SCRIPTS:="solrscripts"}
 
 : ${SOLR_CONFIG_FOLDER:="solr7/"}
-: ${SOLR_CONFIG_NAME:="meloar_conf_1.1.1"}
+: ${SOLR_CONFIG_NAME:="meloar_conf_1.1.2"}
 
 : ${PROJECT:="$1"}
 

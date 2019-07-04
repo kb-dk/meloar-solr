@@ -19,6 +19,8 @@ This schema is for Solr 7+ and will not work under Solr 6.
         <field name="case_verbatim"        type="string" multiValued="true" />
         <field name="loar_resource"        type="string" multiValued="true" />
         <field name="external_resource"    type="string" multiValued="true" />
+        <field name="image_full"           type="string" multiValued="true" />
+        <field name="image_thumbnail"      type="string" multiValued="true" />
 
         <field name="itime"                type="date" indexed="true" stored="false" docValues="true" default="NOW" /> 
         <field name="ctime"                type="date" />

@@ -45,10 +45,18 @@
       *************** DEVEL(<xsl:value-of select ="name(.)"/>)
   </xsl:template>
 
-  <!-- external PDF -->
+  <!-- external PDF and external image -->
   <xsl:template match="md:mods/md:identifier">
     <xsl:if test="./@displayLabel='pdf'">
       <field name="external_resource"><xsl:value-of select="."/></field>
+      <xsl:text>&#10;</xsl:text>
+    </xsl:if>
+    <xsl:if test="./@displayLabel='image'">
+      <field name="image_full"><xsl:value-of select="."/></field>
+      <xsl:text>&#10;</xsl:text>
+    </xsl:if>
+    <xsl:if test="./@displayLabel='thumbnail'">
+      <field name="image_thumbnail"><xsl:value-of select="."/></field>
       <xsl:text>&#10;</xsl:text>
     </xsl:if>
   </xsl:template>
