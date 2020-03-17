@@ -41,15 +41,19 @@ check_parameters() {
 get_church_urls() {
     if [[ ! -s "$PROJECT/kirker_urls.dat" ]]; then
         curl "$CHURCH_LIST_URL" | grep -o '<a[^>]\+churchlink[^>]\+>' | sed 's/.*\(http[^"]\+\).*title="\([^"]\+\)".*/\1 \2/' > "$PROJECT/kirker_urls.dat"
+    else
+        echo " - Skipping download of list of churches as $PROJECT/kirker_urls.dat already exists"
     fi
 }
 
+# Extract the content of all HTML paragraphs (<p>) that has the given class
 qualified_paragraph() {
     local FILE="$1"
     local CLASS="$2"
     grep -o "<p class=\"${CLASS}\">[^<]*</p>" < "$FILE" | sed -e 's/.*<p[^<]*>\([^<]*\)<.*/\1/'
 }
 
+# Extend the given JSON with n values with the given key
 add_json() {
     local JSON="$1"
     local KEY="$2"
@@ -62,6 +66,7 @@ add_json() {
     echo "$JSON"
 }
 
+# Extend the given XML with n values with the given key
 add_xml() {
     local XML="$1"
     local KEY="$2"
@@ -74,6 +79,7 @@ add_xml() {
     echo "$XML"
 }
 
+# Uses an OpenStreetmap-service to resolve geo coordinate for churches
 resolve_coordinates() {
     local QUERY="$1"
     local QUERY=$(sed -e 's/Skt./Sankt/' -e 's/†//' -e 's/ /+/g' <<< "$QUERY")
@@ -102,6 +108,7 @@ resolve_coordinates() {
     jq -r '.[0].lon, .[0].lat' < "$DEST" | tr '\n' ',' | sed 's/,$//'
 }  
 
+# Fetch the HTML page for a single church and extract relevant metadata
 get_single_church_metadata() {
     local CHURCH_URL="$1"
     local CHURCH_BASE=$(sed -e 's%/$%%' -e 's%.*/\([^/]*\)/\([^/]*\)$%\1_\2%' <<< "$CHURCH_URL")
