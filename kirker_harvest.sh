@@ -22,6 +22,9 @@ fi
 : ${DELAY_BETWEEN_RETRIES:="20"}
 : ${DELAY_BETWEEN_REQUESTS:="2"}
 
+: ${FORCE_METADATA:="false"} # If true, single church metadata processing is always done
+: ${SKIP_OSM="false"} # If true, the OpenStreetMap-service is not called 
+
 usage() {
     echo ""
     echo "Usage: ./kirker_harvest.sh"
@@ -53,6 +56,13 @@ qualified_paragraph() {
     grep -o "<p class=\"${CLASS}\">[^<]*</p>" < "$FILE" | sed -e 's/.*<p[^<]*>\([^<]*\)<.*/\1/'
 }
 
+# Extract the content of all HTML divs (<div>) that has the given class
+qualified_div() {
+    local FILE="$1"
+    local CLASS="$2"
+    grep -o "<div class=\"${CLASS}\">[^<]*</div>" < "$FILE" | sed -e 's/.*<div[^<]*>\([^<]*\)<.*/\1/'
+}
+
 # Extend the given JSON with n values with the given key
 add_json() {
     local JSON="$1"
@@ -79,12 +89,12 @@ add_xml() {
     echo "$XML"
 }
 
-# Uses an OpenStreetmap-service to resolve geo coordinate for churches
+# Uses an OpenStreetMap-service to resolve geo coordinate for a church
 resolve_coordinates() {
     local QUERY="$1"
     local QUERY=$(sed -e 's/Skt./Sankt/' -e 's/†//' -e 's/ /+/g' <<< "$QUERY")
     local DEST="$2"
-    if [[ ! -s "$DEST" || ".[]" == .$(cat "$DEST") || "." != .$(grep 'You have been temporarily blocked' < "$DEST") ]]; then
+    if [[ "$SKIP_OSM" == "false" && ( ! -s "$DEST" || ".[]" == .$(cat "$DEST") || "." != .$(grep 'You have been temporarily blocked' < "$DEST") ) ]]; then
         sleep $DELAY_BETWEEN_REQUESTS
         local ATTEMPT=1
         while [[ "$ATTEMPT" -le "$MAX_RETRIES" ]]; do
@@ -117,9 +127,11 @@ get_single_church_metadata() {
     local CHURCH_XML="$PROJECT/xml/${CHURCH_BASE}.xml"
     local CHURCH_OSM="$PROJECT/osm/${CHURCH_BASE}.json"
 
-    if [[ -s "$CHURCH_XML" ]]; then
+    if [[ -s "$CHURCH_XML" && "$FORCE_METADA" == "false" ]]; then
         echo "Exists: $CHURCH_XML"
+
         if [[ "." != .$(grep "place_coordinates" "$CHURCH_XML") ]]; then
+            echo " - Skipping processing of $CHURCH:XML as coordinates are present"
             return
         fi
     fi
@@ -142,6 +154,9 @@ get_single_church_metadata() {
     local AMT=$(qualified_paragraph "$CHURCH_RAW" "county")
     local ADDRESS=$(qualified_paragraph "$CHURCH_RAW" "address")
     local ZIP_CITY=$(qualified_paragraph "$CHURCH_RAW" "zipcity")
+    local VOLUMES=$(qualified_div "$CHURCH_RAW" "volume")
+    # TODO: What about spans? "XIX, bind 3 (1988-91)"
+    local VOLUME_YEARS=$(grep -o '[12][0-9][0-9][0-9]' <<< "$VOLUMES" | sort | uniq)
     local ZIP_ONLY=$(grep -o "[0-9][0-9][0-9][0-9]" <<< "$ZIP_CITY")
 
     local COORDINATES=$(resolve_coordinates "${TITLE}, ${ZIP_ONLY}" "$CHURCH_OSM")
@@ -152,6 +167,8 @@ get_single_church_metadata() {
     fi
     
     if [[ "1" == "2" ]]; then
+        # WARNING: Not synced with XML generation as it has been disabled
+        
         #{id:"kirke_soenderjyllands-amt_arrild-kirke", title:"Arrild Kirke", external_resource:"http://danmarkskirker.natmus.dk/uploads/tx_tcchurchsearch/Sjyll_0031-0046.pdf", external_resource:"http://danmarkskirker.natmus.dk/uploads/tx_tcchurchsearch/Sjyll_2613-2652.pdf", external_resource:"http://danmarkskirker.natmus.dk/uploads/tx_tcchurchsearch/Sjyll_1264-1280_01.pdf", place_name:"Hviding Herred", place_name:"Tønder Amt", place_name:"Arnumvej 24, Arrild"}
         mkdir -p "$PROJECT/json"
         local JSON="{id:\"kirke_${CHURCH_BASE}\""
@@ -169,6 +186,8 @@ get_single_church_metadata() {
         XML=$(add_xml "$XML" "title" "$TITLE")$'\n'
         XML=$(add_xml "$XML" "external_resource" "$PDF")$'\n'
         XML=$(add_xml "$XML" "place_name" "$HERRED")$'\n'
+        XML=$(add_xml "$XML" "volume_ss" "$VOLUMES")$'\n'
+        XML=$(add_xml "$XML" "date_issued_is" "$VOLUME_YEARS")$'\n'
         XML=$(add_xml "$XML" "place_name" "$AMT")$'\n'
         XML=$(add_xml "$XML" "place_name" "$ADDRESS")$'\n'
         XML=$(add_xml "$XML" "place_name" "$ZIP_CITY")$'\n'
