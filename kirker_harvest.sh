@@ -1,7 +1,9 @@
 #!/bin/bash
 
 #
-# Screen scrapes Danmarks Kirker and adds geo coordinates
+# Screen scrapes Danmarks Kirker and adds geo coordinates, producing an XML
+# file for each processed church. These files are intended for ingest into
+# loar.kb.dk by an administrator.
 #
 
 ###############################################################################
