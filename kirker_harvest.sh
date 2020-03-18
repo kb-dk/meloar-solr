@@ -117,8 +117,23 @@ resolve_coordinates() {
             return
         fi
     fi
-    jq -r '.[0].lon, .[0].lat' < "$DEST" | tr '\n' ',' | sed 's/,$//'
+    if [[ -s "$DEST" ]]; then
+        jq -r '.[0].lon, .[0].lat' < "$DEST" | tr '\n' ',' | sed 's/,$//'
+    else
+        echo ""
+    fi
 }  
+
+# Takes a church name and resolves authors for the description of the church, if possible
+# The author-list is 'kirker_authors.txt' and is manually maintained
+resolve_authors() {
+    local CHURCH="$1"
+    if [[ $(grep "^${CHURCH}:" < kirker_authors.txt | wc -l) -ge 2 ]]; then
+        >&2 echo "Error: The church '$CHURCH' has multiple entries in kirker_authors.txt. Please fix!"
+        exit 4
+    fi
+    grep "^${CHURCH}:" < kirker_authors.txt | cut -d: -f2 | sed 's/, */\n/g'
+}
 
 # Fetch the HTML page for a single church and extract relevant metadata
 get_single_church_metadata() {
@@ -137,7 +152,7 @@ get_single_church_metadata() {
             return
         fi
     fi
-    echo "Processing $CHURCH_XML"
+    echo " - Processing $CHURCH_XML"
     
     mkdir -p "$PROJECT/raw"
     mkdir -p "$PROJECT/osm"
@@ -151,7 +166,8 @@ get_single_church_metadata() {
     # Extract meta-data
     local PDF=$(grep -o '<a[^>]\+filelink[^>]\+>' < "$CHURCH_RAW" | grep -o 'http[^"]\+')
     local TITLE=$(grep -o '<title>.*</title>' < "$CHURCH_RAW" | sed -e 's/<title>\(.*\)<\/title>/\1/' -e 's/\(.*\) -.*/\1/')
-
+    local AUTHORS=$(resolve_authors "$TITLE")
+    
     local HERRED=$(qualified_paragraph "$CHURCH_RAW" "township")
     local AMT=$(qualified_paragraph "$CHURCH_RAW" "county")
     local ADDRESS=$(qualified_paragraph "$CHURCH_RAW" "address")
@@ -186,6 +202,7 @@ get_single_church_metadata() {
         local XML="<add>"$'\n'"  <doc>"$'\n'
         XML="${XML}    <field name=\"id\">kirke_${CHURCH_BASE}</field>"$'\n'
         XML=$(add_xml "$XML" "title" "$TITLE")$'\n'
+        XML=$(add_xml "$XML" "author" "$AUTHORS")$'\n'
         XML=$(add_xml "$XML" "external_resource" "$PDF")$'\n'
         XML=$(add_xml "$XML" "place_name" "$HERRED")$'\n'
         XML=$(add_xml "$XML" "volume_ss" "$VOLUMES")$'\n'
@@ -195,7 +212,7 @@ get_single_church_metadata() {
         XML=$(add_xml "$XML" "place_name" "$ZIP_CITY")$'\n'
         XML=$(add_xml "$XML" "place_coordinates" "$COORDINATES")$'\n'
         XML="${XML}  </doc>"$'\n'"</add>"$'\n'
-        echo " - Created XML metadata $CHURCH_XML with coordinates $COORDINATES"
+        echo "   Created XML metadata $CHURCH_XML with coordinates $COORDINATES"
         echo "$XML" > "$CHURCH_XML"
     fi
 }
