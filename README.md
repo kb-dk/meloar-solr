@@ -136,7 +136,7 @@ Open Access PDFs detailing Danish archeological findings, originally available a
 
 The documents have authoritative geo-coordinates.
 
-Ingested into LOAR without the use of scripts from `meloar-solr`.
+Ingested into LOAR without the use of scripts from `meloar-solr`. Data were fetched directly. The project [meloar-transform](https://github.com/statsbiblioteket/meloar-transform) was used to transform the data to a LOAR-friendly format, and they were then ingested by a LOAR administrator.
 
 Indexed into Solr using `ff_full.sh` with corresponding `FF_README.md`.
 
@@ -146,7 +146,7 @@ Public available PDFs detailing Danish churches, originally available at [Danmar
 
 The documents does not have authoritative metadata, but most of them can be geographically placed from the church names.
 
-Ingested into LOAR with the script `kirker_harvest.sh`. 
+Ingested into LOAR with the script `kirker_harvest.sh`. That is *fetched* using the script `kirker_harvest.sh`. The project [meloar-transform](https://github.com/statsbiblioteket/meloar-transform) was used to transform the data to a LOAR-friendly format, and they were then ingested by a LOAR administrator.
 
 Indexed into Solr using `kirker.sh` with corresponding `DANMARKS_KIRKER.md`.
 
@@ -160,9 +160,9 @@ Indexed into Solr using `grundtvig.sh` with corresponding `GRUNDTVIG.md`.
 
 ### Folkeskole
 
-Oen Access documents with regulations and similar regarding Danish public school, original location unknown. Published using MeLOAR at [MELOAR - Folkeskole](https://labs.statsbiblioteket.dk/meloar/folkeskole/).
+Open Access documents with regulations and similar regarding Danish public school, original location unknown. Published using MeLOAR at [MELOAR - Folkeskole](https://labs.statsbiblioteket.dk/meloar/folkeskole/).
 
-It is unknown how the data was ingested into LOAR.
+Data fetched directly. The project [meloar-transform](https://github.com/statsbiblioteket/meloar-transform) was used to transform the data to a LOAR-friendly format, and they were then ingested by a LOAR administrator.
 
 Indexed into Solr using `folkeskole.sh` with corresponding `DANMARKS_KIRKER.md`. No explicit README.
 
