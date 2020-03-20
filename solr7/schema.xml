@@ -11,9 +11,12 @@ This schema is for Solr 7+ and will not work under Solr 6.
         <field name="_root_" type="string" indexed="true" stored="true" docValues="true"/>
         <field name="_text_" type="text_general" multiValued="true" /> <!-- Isn't this only used for schema-less? -->
 
-        <field name="collection"           type="string" /> <!-- aka recordBase aka target: fof, kirker, ... -->
+        <!-- aka recordBase aka target: fof, kirker, ... -->
+        <field name="collection"           type="string" /> 
 
+        <!-- Authoritative LOAR ID -->
         <field name="loar_id"              type="string" />
+        <!-- URL for human access to the LOAR record -->
         <field name="loar_uri"             type="string" />
         <field name="case"                 type="text_general" multiValued="true" />
         <field name="case_verbatim"        type="string" multiValued="true" />
@@ -43,7 +46,11 @@ This schema is for Solr 7+ and will not work under Solr 6.
         <field name="chapter_total"        type="int" />
         <field name="chapter"              type="text_general" />
         <field name="chapter_verbatim"     type="string" />
-        
+
+        <!-- Description of the full source document (shared between multiple Solr documents) -->
+        <field name="description"          type="text_general" multiValued="true" />
+
+        <!-- Content from the single page that is represented by this Solr document -->
         <field name="content"              type="text_general" multiValued="true" />
 
         <!-- The year associated with the material -->
