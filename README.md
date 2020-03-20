@@ -160,7 +160,7 @@ Indexed into Solr using `grundtvig.sh` with corresponding `GRUNDTVIG.md`.
 
 ### Folkeskole
 
-Open Access documents with regulations and similar regarding Danish public school, original location unknown. Published using MeLOAR at [MELOAR - Folkeskole](https://labs.statsbiblioteket.dk/meloar/folkeskole/).
+Open Access documents with regulations and similar regarding Danish public school, original location [AU Library: Skolelove](https://library.au.dk/materialer/saersamlinger/skolelove/). Published using MeLOAR at [MELOAR - Folkeskole](https://labs.statsbiblioteket.dk/meloar/folkeskole/).
 
 Data fetched directly. The project [meloar-transform](https://github.com/statsbiblioteket/meloar-transform) was used to transform the data to a LOAR-friendly format, and they were then ingested by a LOAR administrator.
 
