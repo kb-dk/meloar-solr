@@ -834,6 +834,8 @@
                     
        <str name="qf">
          content
+         title^5
+         year^2
          chapter_verbatim^6
          chapter^5
          keyword^3
