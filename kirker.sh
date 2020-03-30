@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-# Harvest Danmarks Kirker from meloar, enhance with PDF content and prepare for
+# Harvest Danmarks Kirker from LOAR, enhance with PDF content and prepare for
 # Solr indexing
 #
 
