@@ -162,9 +162,16 @@ Indexed into Solr using `grundtvig.sh` with corresponding `GRUNDTVIG.md`.
 
 Open Access documents with regulations and similar regarding Danish public school, original location [AU Library: Skolelove](https://library.au.dk/materialer/saersamlinger/skolelove/). Published using MeLOAR at [MELOAR - Folkeskole](https://labs.statsbiblioteket.dk/meloar/folkeskole/).
 
-Data fetched directly. The project [meloar-transform](https://github.com/statsbiblioteket/meloar-transform) was used to transform the data to a LOAR-friendly format, and they were then ingested by a LOAR administrator.
+Core data delivered as one-time Excel. The project [meloar-transform](https://github.com/statsbiblioteket/meloar-transform) was used to transform the data to a LOAR-friendly format, and they were then ingested by a LOAR administrator.
 
-Indexed into Solr using `folkeskole.sh` with corresponding `DANMARKS_KIRKER.md`. No explicit README.
+Document-specific metadata and (sometimes) PDF is available at e.g. [https://library.au.dk/materialer/saersamlinger/skolelove/?tx_lfskolelov_pi1[lawid]=25](https://library.au.dk/materialer/saersamlinger/skolelove/?tx_lfskolelov_pi1[lawid]=25). Extraction of the descriptions on the pages can be done by exporting the closed-source Excel file to CSV `skolelove.csv` with tabulator as delimiter and running
+```
+mkdir -p folkeskole/description ; for ID in $(cut -d$'\t' -f1 skolelove.csv | grep '[0-9]\+'); do echo "$ID" ; curl -s 'https://library.au.dk/materialer/saersamlinger/skolelove/?tx_lfskolelov_pi1[lawid]='$ID | grep -m 1 -A 999999 "history.back()" t | tail -n+2 | grep -B 999999 "history.back()" | head -n -1 | sed 's/<[^>]*>//g' > folkeskole/description/${ID}.txt ; done ; echo "Done. Result in folkeskole/description"
+```
+Note that not all documents have a description.
+
+
+Indexed into Solr using `folkeskole.sh`. No explicit README.
 
 ### Partiprogrammer
 
