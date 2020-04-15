@@ -1,0 +1,179 @@
+# Manually updated list of authors for the volumes describing Danish churches
+# Find authors by visiting
+# http://danmarkskirker.natmus.dk/bogvaerket/seneste-udgivelser/
+# and clicking on the dirrent "amter", then on the thumbnails.
+# The authors are on top and the churches at the bottom
+#
+# Format is
+# Church-name: Authors
+# where authors are comma-separated
+#
+# Sanity-check spelling & matching with
+# IFS=$'\n' ; echo "### Entries in kirker_authors.txt without a corresponding file in kirker/xml/" ; for KIRKE in $(grep ":" < kirker_authors.txt | grep -v "^#" | cut -d: -f1); do if [[ "." == ".$(grep "title\">$KIRKE</" kirker/xml/*)" ]] ; then echo "$KIRKE" ; fi ; done
+
+
+# Odense Amt
+# http://danmarkskirker.natmus.dk/bogvaerket/seneste-udgivelser/odense-amt/
+
+Krogsbølle †Kirke: Martin Wangsgaard Jürgensen, David Burmeister 
+Trefoldighedskirken ved Kørup: Martin Wangsgaard Jürgensen, David Burmeister 
+Agernæs: Martin Wangsgaard Jürgensen, David Burmeister 
+Nørre Nærå Kirke: Martin Wangsgaard Jürgensen, David Burmeister 
+Bederslev Kirke: Martin Wangsgaard Jürgensen, David Burmeister 
+Uggerslev Kirke: Martin Wangsgaard Jürgensen, David Burmeister 
+
+Lunde Kirke: Kirstin Eliasen, Lasse Jonas Bendtsen, Nationalmuseet 2019
+Lumby Kirke: Kirstin Eliasen, Lasse Jonas Bendtsen, Nationalmuseet 2019
+Trefoldighedskapellet i Stige: Kirstin Eliasen, Lasse Jonas Bendtsen, Nationalmuseet 2019
+Stige Filialkirke: Kirstin Eliasen, Lasse Jonas Bendtsen, Nationalmuseet 2019
+Allesø Kirke: Kirstin Eliasen, Lasse Jonas Bendtsen, Nationalmuseet 2019
+
+Norup Kirke: Martin Wangsgaard Jürgensen, David Burmeister
+Hasmark Kirke: Martin Wangsgaard Jürgensen, David Burmeister
+Ølund: Martin Wangsgaard Jürgensen, David Burmeister
+Egense Kirke: Martin Wangsgaard Jürgensen, David Burmeister
+Skeby Kirke: Martin Wangsgaard Jürgensen, David Burmeister
+Gerskov Kirke: Martin Wangsgaard Jürgensen, David Burmeister
+
+Otterup Kirke: Martin Wangsgaard Jürgensen, David Burmeister 
+Østrup Kirke: Martin Wangsgaard Jürgensen, David Burmeister 
+Hjadstrup Kirke: Martin Wangsgaard Jürgensen, David Burmeister 
+
+Marslev Kirke: Martin Wangsgaard Jürgensen, David Burmeister 
+Birkende Kirke: Martin Wangsgaard Jürgensen, David Burmeister 
+Rynkeby Kirke: Martin Wangsgaard Jürgensen, David Burmeister 
+Skovsbos Kapel: Martin Wangsgaard Jürgensen, David Burmeister 
+Revninge Kirke: Martin Wangsgaard Jürgensen, David Burmeister
+
+Viby Kirke: Kirstin Eliasen, Lasse Jonas Bendtsen 
+Mesinge Kirke: Kirstin Eliasen, Lasse Jonas Bendtsen 
+Dalby Kirke: Kirstin Eliasen, Lasse Jonas Bendtsen 
+Bethlehemskirken: Kirstin Eliasen, Lasse Jonas Bendtsen 
+Stubberup Kirke: Kirstin Eliasen, Lasse Jonas Bendtsen
+
+Sønder Nærå: Martin Wangsgaard Jürgensen, David Burmeister 
+Sønder Nærå Valgmenighedskirke: Martin Wangsgaard Jürgensen, David Burmeister 
+Nørre Lyndelse Kirke: Martin Wangsgaard Jürgensen, David Burmeister 
+Højby Kirke: Martin Wangsgaard Jürgensen, David Burmeister 
+Nørre Søby Kirke: Martin Wangsgaard Jürgensen, David Burmeister
+
+Drigstrup Kirke: Kirstin Eliasen, Lasse J. Bendtsen 
+Munkebo Kirke: Kirstin Eliasen, Lasse J. Bendtsen 
+Kølstrup Kirke: Kirstin Eliasen, Lasse J. Bendtsen 
+Agedrup Kirke: Kirstin Eliasen, Lasse J. Bendtsen 
+
+Seden Kirke: David Burmeister, Martin Wangsgaard Jürgensen
+Åsum Kirke: David Burmeister, Martin Wangsgaard Jürgensen
+Fraugde Kirke: David Burmeister, Martin Wangsgaard Jürgensen
+Tornbjerg Kirke: David Burmeister, Martin Wangsgaard Jürgensen
+Allerup Kirke: David Burmeister, Martin Wangsgaard Jürgensen
+
+Davinde Kirke: Lasse Jonas Bendtsen, Kirstin Eliasen
+Rønninge Kirke: Lasse Jonas Bendtsen, Kirstin Eliasen
+Gravkapel ved Rønninge Søgård: Lasse Jonas Bendtsen, Kirstin Eliasen
+Rolfsted Kirke: Lasse Jonas Bendtsen, Kirstin Eliasen
+Ferritslev Kirke: Lasse Jonas Bendtsen, Kirstin Eliasen
+
+Brændekilde Kirke: Martin Wangsgaard Jürgensen, David Burmeister
+Bellinge Kirke: Martin Wangsgaard Jürgensen, David Burmeister
+Stenløse Kirke: Martin Wangsgaard Jürgensen, David Burmeister
+Fangel Kirke: Martin Wangsgaard Jürgensen, David Burmeister
+
+Verninge Kirke: Lasse J. Bendtsen, Kirstin Eliasen
+Tommerup Kirke: Lasse J. Bendtsen, Kirstin Eliasen
+Brylle Kirke: Lasse J. Bendtsen, Kirstin Eliasen
+Broholm Kirke: Lasse J. Bendtsen, Kirstin Eliasen
+Vissenbjerg Kirke: Lasse J. Bendtsen, Kirstin Eliasen
+
+Odense Herred: Martin Wangsgaard Jürgensen, David B. Kaaring
+Pårup Kirke: Martin Wangsgaard Jürgensen, David B. Kaaring
+Næsbyhoved Broby Kirke: Martin Wangsgaard Jürgensen, David B. Kaaring
+Næsby Kirke: Martin Wangsgaard Jürgensen, David B. Kaaring
+Korup Kirke: Martin Wangsgaard Jürgensen, David B. Kaaring
+Ubberud Kirke: Martin Wangsgaard Jürgensen, David B. Kaaring
+
+Dalum Kirke: Martin Wangsgaard Jürgensen, David B. Kaaring
+Dalum Klosters kirke: Martin Wangsgaard Jürgensen, David B. Kaaring
+Hjallese Kirke: Martin Wangsgaard Jürgensen, David B. Kaaring
+Hjallese †Kirke: Martin Wangsgaard Jürgensen, David B. Kaaring
+Sanderum Kirke: Martin Wangsgaard Jürgensen, David B. Kaaring
+Ravnebjerg Kirke: Martin Wangsgaard Jürgensen, David B. Kaaring
+Dyrup Kirke: Martin Wangsgaard Jürgensen, David B. Kaaring
+
+Skt. Nikolaj Kirke: Thomas Bertelsen, Rikke I. Kristiansen, David B. Kaaring 
+Kirkegårde i Middelfart: Thomas Bertelsen, Rikke I. Kristiansen, David B. Kaaring 
+†Kapel på Hindsgavl Slot: Thomas Bertelsen, Rikke I. Kristiansen, David B. Kaaring 
+†Hellig Kors Kapel: Thomas Bertelsen, Rikke I. Kristiansen, David B. Kaaring 
+Statshospitalets †kirkesal: Thomas Bertelsen, Rikke I. Kristiansen, David B. Kaaring 
+
+Vor Frue Kirke: Thomas Bertelsen, David B. Kaaring 
+Vor Frelsers Kirke: Thomas Bertelsen, David B. Kaaring 
+Kirkegårdene i Assens: Thomas Bertelsen, David B. Kaaring 
+Kapel i Helligåndshuset: Thomas Bertelsen, David B. Kaaring 
+Hellig Kors Kapel: Thomas Bertelsen, David B. Kaaring 
+
+Skt. Nikolaj Kirke: Thomas Bertelsen, Rikke I. Kristiansen, David B. Kaaring
+
+Skt. Laurentii Kirke: Rikke I. Kristiansen, Mogens Vedsø
+Emauskirken: Rikke I. Kristiansen, Mogens Vedsø
+Kirkegårde i Kerteminde: Rikke I. Kristiansen, Mogens Vedsø
+
+
+# Ringkøbing Amt
+# http://danmarkskirker.natmus.dk/bogvaerket/seneste-udgivelser/ringkoebing-amt/
+
+Ejsing Kirke: Anders C. Christensen, Birgitte Bøggild Johannsen
+Ryde Kirke: Anders C. Christensen, Birgitte Bøggild Johannsen
+Sevel Kirke: Anders C. Christensen, Birgitte Bøggild Johannsen
+Stubber Kloster: Anders C. Christensen, Birgitte Bøggild Johannsen
+Trandum Kirke: Anders C. Christensen, Birgitte Bøggild Johannsen
+Herrup Kirke: Anders C. Christensen, Birgitte Bøggild Johannsen
+
+Sahl Kirke: Anders C. Christensen, Birgitte Bøggild Johannsen
+Vinderup Kirke: Anders C. Christensen, Birgitte Bøggild Johannsen
+
+Gørding Kirke: Anders C. Christensen, Birgitte Bøggild Johannsen
+Vemb Kirke: Anders C. Christensen, Birgitte Bøggild Johannsen
+Bur Kirke: Anders C. Christensen, Birgitte Bøggild Johannsen
+
+Estvad Kirke: Anders C. Christensen, Birgitte Bøggild Johannsen
+Rønbjerg Kirke: Anders C. Christensen, Birgitte Bøggild Johannsen
+
+Vejrum Kirke: Line M. Bonde, Anders C. Christensen, Birgitte Bøggild Johannsen
+Ølby Kirke: Line M. Bonde, Anders C. Christensen, Birgitte Bøggild Johannsen
+Fovsing Kirke: Line M. Bonde, Anders C. Christensen, Birgitte Bøggild Johannsen
+
+Asp Kirke: Anders C. Christensen, Birgitte Bøggild Johannsen
+Navr Kirke: Anders C. Christensen, Birgitte Bøggild Johannsen
+Sir Kirke: Anders C. Christensen, Birgitte Bøggild Johannsen
+
+# No authors stated
+# http://danmarkskirker.natmus.dk/bogvaerket/seneste-udgivelser/ringkoebing-amt/hefte-21-22-handbjerg-hjerm-gimsing/
+# Handbjerg Kirke
+# Hjerm Kirke
+# Hjerm Østre Kirke
+# Gimsing Kirke
+
+# No authors stated
+# http://danmarkskirker.natmus.dk/bogvaerket/seneste-udgivelser/ringkoebing-amt/hefte-19-20-maabjerg-mejrup-borbjerg-hogager-og-ellebaek/
+# Måbjerg Kirke
+# Mejrup Kirke
+# Borbjerg Kirke
+# Hogager Kirke
+# Ellebæk Kirke
+
+# No authors stated
+# http://danmarkskirker.natmus.dk/bogvaerket/seneste-udgivelser/ringkoebing-amt/hefte-18-ramme-fjaltring-trans/
+# Ramme Kirke
+# Fjaltring Kirke
+# Trans Kirke
+
+
+# Svendborg Amt
+# http://danmarkskirker.natmus.dk/bogvaerket/seneste-udgivelser/ringkoebing-amt/hefte-18-ramme-fjaltring-trans/
+# No authors stated
+
+
+# Vejle Amt
+# http://danmarkskirker.natmus.dk/bogvaerket/seneste-udgivelser/vejle-amt/
+# No authors stated

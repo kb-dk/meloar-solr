@@ -25,7 +25,7 @@ or a page.
         <!-- The overall collection that this material belongs to. There will normally only
              be one type of collection in a Solr collection, but it is nevertheless stated
              explicitly, both for debugging and for future cross-collection search purposes. -->
-        <field name="collection"           type="string" required="true"/> <!-- aka recordBase aka target: fof, kirker, ... -->
+        <field name="collection"           type="string" required="true"/>
 
         <!-- The LOAR-specific ID for the material. -->
         <field name="loar_id"              type="string" />
@@ -101,6 +101,8 @@ or a page.
         <!-- Free-text content that this document represents. Normally extracted from the
              source material (PDF/Word document etc) directly as text or using OCR. -->
         <field name="content"              type="text_general" multiValued="true" />
+        <!-- Description of the full source document (shared between multiple Solr documents). -->
+        <field name="description"          type="text_general" multiValued="true" />
 
         <!-- Non-controlled name for the place that the material is about. -->
         <field name="place_name"           type="text_general" multiValued="true" />
