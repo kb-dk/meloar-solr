@@ -179,3 +179,19 @@ The documents originates from images, so OCR is performed. Currently the OCR-ste
 
 OCR'ed and indexed into Solr using `partiprogrammer.md`. No explicit README.
 
+## Aviser
+
+Create a collection
+```
+solrscripts/cloud_sync.sh solr7 aviser-conf aviser
+```
+
+Run the script
+```
+aviser.sh
+```
+
+Index the result
+```
+cloud/7.3.0/solr1/bin/post -p 9595 -c aviser aviser/*.xml
+```
