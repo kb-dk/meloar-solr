@@ -9,7 +9,10 @@ if [[ -s aviser.conf ]]; then
 fi
 
 : ${AREMOTE:="username@server"}
-: ${AROOT:="aviser_remote/"}
+: ${REMOTE_MOUNT:="aviser_remote/"}
+
+: ${AVISER_NEW:="aviser/new"}
+: ${AVISER_INDEXED:="aviser/indexed"}
 
 prepare() {
     local REMOTE="${AREMOTE}:/sbftp-home/infomed2/"
@@ -20,15 +23,22 @@ prepare() {
         mkdir -p aviser_remote
         sshfs $REMOTE aviser_remote
     fi
-    mkdir -p aviser
+    mkdir -p "$AVISER_INDEXED"
+    mkdir -p "$AVISER_NEW"
 }
 
 # TODO: Split into separate fields on paragraphs
 clean() {
-    local CONTENT="$1"
+    local FIELD="$1"
+    local CONTENT="$2"
     # <bodytext>&lt;p id="p1"&gt;? Katjas mor spørger
     # &lt;p id="p1"&gt;? Katjas mor spørger
-    sed -e 's/.*<[^>]*>\([^<]*\)<[^>]*>.*/\1/' -e 's/&lt;p id="p[0-9]*"&gt;/\n/g' -e 's/&lt;\/p&gt;//g' -e 's/&lt;br \/&gt;/\n/g' <<< "$CONTENT"
+    sed -e 's/.*<[^>]*>\([^<]*\)<\/[^>]*>.*/\1/' -e 's/&lt;p id="p[0-9]*"&gt;/\n/g' -e 's/&lt;\/p&gt;//g' -e 's/&lt;br \/&gt;/\n/g' <<< "$CONTENT" | while read -r LINE; do
+        if [[ "." == ".$LINE" ]]; then
+            continue
+        fi
+        echo "<field name=\"$DFIELD\">${LINE}</field>"
+    done
 }
 
 add_date_fields() {
@@ -43,16 +53,15 @@ add_field() {
     local SFILE="$1"
     local SFIELD="$2"
     local DFIELD="$3"
-    grep "<$SFIELD>" < "$SFILE" | while read -r FCONTENT; do
-        echo "<field name=\"$DFIELD\">$(clean "$FCONTENT")</field>"
+    grep -o "<$SFIELD>[^<]*</$SFIELD>" < "$SFILE" | while read -r FCONTENT; do
+        clean "$DFIELD" "$FCONTENT"
     done
 }
 
 # 20110612_jydskevestkystensoenderborg_article_e2bc77ba.xml
 article() {
     local ARTICLE="$1"
-    local PNAME="$2"
-    local ADOC="$3"
+    local ADOC="$2"
 #    echo "   - $(basename $ARTICLE)"
 
     if [[ ! -s "$ARTICLE" ]]; then
@@ -64,7 +73,7 @@ article() {
     local ADATE=$(cut -d_ -f1 <<< "$AFILE")
 
     #    echo "$AFILE $ADATE"
-    xmllint --format "$ARTICLE" > t_article.xml
+    xmllint --format "$ARTICLE" | tr '\n' ' ' > t_article.xml
 
     echo '<doc>' >> "$ADOC"
     echo '<field name="collection">aviser</field>' >> "$ADOC"
@@ -92,7 +101,7 @@ paper() {
 #    echo -n "."
     echo "  - Paper $PNAME"
     find "${PFOLDER}/articles/" -iname "*.xml" | while read -r ARTICLE; do
-        article "$ARTICLE" "$PNAME" "$ADOC"
+        article "$ARTICLE" "$ADOC"
     done
 }
 
@@ -112,19 +121,45 @@ delivery() {
 }
 
 root_folders() {
-    echo "Iterating folders starting from $AROOT"
+    echo "Iterating folders starting from $REMOTE_MOUNT"
     IFS=$'\n'
-    find $AROOT -maxdepth 2 -iname "dl_[12][0-9][0-9][0-9][0-9][0-9][0-9][0-9]_rt[1-9]*" | while read -r AFOLDER; do
+    find $REMOTE_MOUNT -maxdepth 2 -iname "dl_[12][0-9][0-9][0-9][0-9][0-9][0-9][0-9]_rt[1-9]*" | while read -r AFOLDER; do
         FNAME=$(sed 's%.*/\([^/]\+\)$%\1%' <<< "$AFOLDER")
-        local ADOC="aviser/${FNAME}.xml"
-        if [[ ! -s "$ADOC" ]]; then
-            # aviser_remote/dl_20120728_rt2 dl_20120728_rt2.xml
-            delivery "$AFOLDER" "$ADOC"
-        else
+        local ADOC="${AVISER_NEW}/${FNAME}.xml"
+        local IDOC="${AVISER_INDEXED}/${FNAME}.xml"
+        if [[ -s "$ADOC" ]]; then
             echo " - Already exists: $ADOC"
+        elif [[ -s "$IDOC" ]]; then
+            echo " - Already exists: $IDOC"
+        else            
+            # aviser_remote/dl_20120728_rt2 dl_20120728_rt2.xml
+            if [[ -s "${ADOC}.in_progress" ]]; then
+                echo " - Removing old ${ADOC}.in_progress before processing"
+                rm "${ADOC}.in_progress"
+            fi
+            delivery "$AFOLDER" "${ADOC}.in_progress"
+            mv "${ADOC}.in_progress" "${ADOC}"
         fi
     done
 }
 
-prepare
-root_folders
+debug_file() {
+    local IN="$1"
+    >&2 echo " - Processing $F"
+
+    T=$(mktemp)
+    article "$IN" "$T"
+    cat "$T"
+    rm "$T"
+}
+
+if [[ -z "$1" ]]; then
+    echo "Processing input from $AVISER_NEW/"
+    prepare
+    root_folders
+else
+    >&2 echo "Entering debug mode: Analyzing specified files and writing output to stdout"
+    for F in "$@"; do
+        debug_file "$F" "$T"
+    done
+fi
