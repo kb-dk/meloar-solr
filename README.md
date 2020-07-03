@@ -181,17 +181,31 @@ OCR'ed and indexed into Solr using `partiprogrammer.md`. No explicit README.
 
 ## Aviser
 
+Proof Of Concept for digital legal deposit newspapers at the Ryal Danish Library. Only works on the developer network at the Royal Danish Library and only if the machine with the data is known and only if the user has the correct SSH key.
+
 Create a collection
 ```
 solrscripts/cloud_sync.sh solr7 aviser-conf aviser
 ```
 
-Run the script
+Create a file `aviser.conf` with the content `: ${AREMOTE:="username@server"}` and run the script
 ```
-aviser.sh
+./aviser.sh
 ```
+This will fetch & analyze the article files and store the result as `SolrDocumentXML` in `aviser/new/`.
+The script can be stopped and started at will. It will continue from where it was stopped (approximately).
 
-Index the result
+Debugging a specific input file can be done with
 ```
-cloud/7.3.0/solr1/bin/post -p 9595 -c aviser aviser/*.xml
+./aviser_index.sh aviser_remote/dl_20110729_rt2/boersen/articles/20110729_boersen_article_e2ccb569.xml`
 ```
+which will pipe the generated `SolrdocumentXml` to stdout.
+
+
+Index the result with
+```
+./aviser_index.sh`
+```
+This tries to index all files in `aviser/new/`. Successfull index moves the file to `aviser/indexed/` while a fail moves it to `aviser/failed/`.
+
+
