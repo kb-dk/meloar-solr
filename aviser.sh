@@ -22,6 +22,10 @@ prepare() {
         echo "Mounting remote drive $REMOTE"
         mkdir -p aviser_remote
         sshfs $REMOTE aviser_remote
+        if [[ $(ls aviser_remote | wc -l) -le 3 ]]; then
+            >&2 echo "Error: Unable to mount $REMOTE to aviser_remote/"
+            exit 3
+        fi
     fi
     mkdir -p "$AVISER_INDEXED"
     mkdir -p "$AVISER_NEW"
