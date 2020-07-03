@@ -25,9 +25,9 @@ index() {
             mv "$DOC_FILE" "$AVISER_INDEXED/"
         else
             echo " -  $DOC_FILE failed, moved to $AVISER_FAILED"
+            echo "$REPLY"
             mv "$DOC_FILE" "$AVISER_FAILED/"
         fi
-        echo "$REPLY"
     done
 }
 
