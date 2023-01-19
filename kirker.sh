@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-# Harvest Danmarks Kirker from meloar, enhance with PDF content and prepare for
+# Harvest Danmarks Kirker from LOAR, enhance with PDF content and prepare for
 # Solr indexing
 #
 
@@ -21,7 +21,10 @@ if [[ -s "kirke.conf" ]]; then
 fi
 : ${PROJECT:="kirker"}
 #: ${REPOSITORY:="https://loar.kb.dk/oai/request"}
-: ${REPOSITORY:="https://dspace-stage.statsbiblioteket.dk/oai/request"}
+#: ${REPOSITORY:="https://dspace-stage.statsbiblioteket.dk/oai/request"}
+: ${REPOSITORY:="https://loar.kb.dk/oai/request"}
+: ${LOAR_SET:="col_1902_4298"}
+: ${LOAR_PREFIX:="oai_dc"}
 
 usage() {
     echo ""
@@ -44,7 +47,7 @@ check_parameters() {
 
 check_parameters "$@"
 
-USE_RESUMPTION="true" REPOSITORY="$REPOSITORY" METADATA_PREFIX="oai_dc" PROJECT="$PROJECT" SET="com_1902_7392" ./harvest_oai_pmh.sh
+USE_RESUMPTION="true" REPOSITORY="$REPOSITORY" METADATA_PREFIX="$LOAR_PREFIX" PROJECT="$PROJECT" SET="$LOAR_SET" ./harvest_oai_pmh.sh
 PROJECT="$PROJECT" ./split_harvest.sh
 PROJECT="$PROJECT" XSLT="$(pwd)/oai_dc2solr.xsl" SUB_SOURCE="records" SUB_DEST="solr_base" ./apply_xslt.sh
 

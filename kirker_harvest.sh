@@ -204,6 +204,7 @@ get_single_church_metadata() {
         XML=$(add_xml "$XML" "title" "$TITLE")$'\n'
         XML=$(add_xml "$XML" "author" "$AUTHORS")$'\n'
         XML=$(add_xml "$XML" "external_resource" "$PDF")$'\n'
+        XML=$(add_xml "$XML" "origin" "$CHURCH_URL")$'\n'
         XML=$(add_xml "$XML" "place_name" "$HERRED")$'\n'
         XML=$(add_xml "$XML" "volume_ss" "$VOLUMES")$'\n'
         XML=$(add_xml "$XML" "date_issued_is" "$VOLUME_YEARS")$'\n'

@@ -1,56 +1,126 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!-- 
 This schema is for Solr 7+ and will not work under Solr 6.
+
+Note: The comments above the fields are meant to be extracted and used as documentation
+elsewhere. They are in markdown format and must be placed immediately above the field
+definitions to be considered documentation.
+
+Dynamic fields are defined, but discouraged: Please extend the schema with explicit
+fields instead.
+
+Each document represent a logical section of source material. This is typically a chapter
+or a page.
 -->
 
 <schema name="meloar" version="1.6">
     <fields>
-        <!-- Solr special purpose meta-fields. Explicit attributes to be sure they are set correctly -->
+      <!-- Solr special purpose meta-fields. Explicit attributes to be sure they are set correctly -->
+      
         <field name="id" type="string" indexed="true" stored="true" docValues="true" required="true" />
         <field name="_version_" type="long" indexed="true" stored="true" docValues="true" />
         <field name="_root_" type="string" indexed="true" stored="true" docValues="true"/>
         <field name="_text_" type="text_general" multiValued="true" /> <!-- Isn't this only used for schema-less? -->
 
-        <field name="collection"           type="string" /> <!-- aka recordBase aka target: fof, kirker, ... -->
+        <!-- The overall collection that this material belongs to. There will normally only
+             be one type of collection in a Solr collection, but it is nevertheless stated
+             explicitly, both for debugging and for future cross-collection search purposes. -->
+        <field name="collection"           type="string" required="true"/>
 
+        <!-- The LOAR-specific ID for the material. -->
         <field name="loar_id"              type="string" />
+        <!-- URI for the LOAR webpage for the material. -->
         <field name="loar_uri"             type="string" />
+        <!-- The case/project/group that this material belong to. -->
         <field name="case"                 type="text_general" multiValued="true" />
+        <!-- The case/project/group that this material belong to, verbatim version.
+             * Sample use: Facet on case:
+                           `facet=true&facet.field=case` -->
         <field name="case_verbatim"        type="string" multiValued="true" />
+        <!-- The resource (PDF, Word Document etc) for the material in the LOAR repository. -->
         <field name="loar_resource"        type="string" multiValued="true" />
+        <!-- The resource (PDF, Word Document etc) for the material on a third party
+             system (normally the original publish location of the material). -->
         <field name="external_resource"    type="string" multiValued="true" />
+        <!-- Full size image for the material. -->
         <field name="image_full"           type="string" multiValued="true" />
+        <!-- Thumbnail for the material. Normally only available if the source is an
+             image itself. -->
         <field name="image_thumbnail"      type="string" multiValued="true" />
 
-        <field name="itime"                type="date" indexed="true" stored="false" docValues="true" default="NOW" /> 
+        <!-- Timestamp for when the material was indexed.
+             * Sample use: Freezing a query result even when new documents are added to the index:
+                           `q=foo&fq=itime:[* TO 2018-05-16T10:33:00Z]`
+             * Sample use: Discover new documents added since last check for new documents:
+                           `q=*:*&fq=itime:[2018-05-16T10:33:00Z TO *]` -->
+        <field name="itime"                type="date" indexed="true" stored="false" docValues="true" default="NOW" />
+        <!-- Timestamp for when the source material was created. -->
         <field name="ctime"                type="date" />
+
+        <!-- States whether or not the document has been enriched with chapter and
+             content extracted from the source (PDF/Word document etc), as opposed
+             to having only authoritative metadata. -->
         <field name="enriched"             type="boolean" default="false" />
-        
+
+        <!-- The title for the material. -->
         <field name="title"                type="text_general" multiValued="false" />
-        
-        <field name="author"               type="text_general" multiValued="true" />
-        <field name="author_verbatim"      type="string" multiValued="true" />
 
-        <field name="place_name"           type="text_general" multiValued="true" />
-        <field name="place_name_verbatim"  type="string" multiValued="true" />
-        <field name="place_coordinates"    type="location" />
+        <!-- Sequential number for the chapter that this document belong to. -->
+        <field name="chapter_id"           type="int" />
+        <!-- total number of chapters for the current title. -->
+        <field name="chapter_total"        type="int" />
+        <!-- Chapter name. -->
+        <field name="chapter"              type="text_general" />
+        <!-- The chapter name for the document, verbatim version used for faceting etc.
+             * Sample use: Facet on shapter:
+                           `facet=true&facet.field=chapter_verbatim` -->
+        <field name="chapter_verbatim"     type="string" />
 
-        <field name="keyword"              type="string" multiValued="true" />
-
+        <!-- Page in the source material (PDF/Word document etc) thet this document represent.
+             If the document spans multiple pages, all the pages should be indexed.
+             * Sample use: Group by page:
+                           `group=true&group.field=page`
+             * Sample use: Sort by page (first page if there are more than one) ascending:
+                           `sort=page asc`
+             * Sample use: Sort by page (last page if there are more than one) descending:
+                           `sort=page desc`
+             * Sample use: Sort by page (first page if there are more than one) descending:
+                           `sort=field(page,min) desc` -->
         <field name="page"                 type="int" multiValued="true" />
 
-        <field name="chapter_id"           type="int" />
-        <field name="chapter_total"        type="int" />
-        <field name="chapter"              type="text_general" />
-        <field name="chapter_verbatim"     type="string" />
-        
-        <field name="content"              type="text_general" multiValued="true" />
+        <!-- The author of the material. -->
+        <field name="author"               type="text_general" multiValued="true" />
+        <!-- The author of the material, verbatim version used for faceting etc.
+             * Sample use: Facet by author:
+                           `facet=true&facet.field=author_verbatim` -->
+        <field name="author_verbatim"      type="string" multiValued="true" />
 
-        <!-- The year associated with the material -->
+        <!-- Non-controlled keywords for the material. -->
+        <field name="keyword"              type="string" multiValued="true" />
+
+        <!-- Free-text content that this document represents. Normally extracted from the
+             source material (PDF/Word document etc) directly as text or using OCR. -->
+        <field name="content"              type="text_general" multiValued="true" />
+        <!-- Description of the full source document (shared between multiple Solr documents). -->
+        <field name="description"          type="text_general" multiValued="true" />
+
+        <!-- Non-controlled name for the place that the material is about. -->
+        <field name="place_name"           type="text_general" multiValued="true" />
+        <!-- Non-controlled name of the place that the material is about, verbatim version
+             used for faceting etc.
+             * Sample use: Facet on place:
+                           `facet=true&facet.field=place_name_verbatim` -->
+        <field name="place_name_verbatim"  type="string" multiValued="true" />
+        <!-- Coordinates for the place that the material is about. -->
+        <field name="place_coordinates"    type="location" />
+
+        <!-- The year associated with the material.
+             * Sample use: `facet=true&facet.field=year&facet.f.year.sort=index desc` -->
         <field name="year"                 type="int" />
 
         
         <!-- The time of document indexing. Set automatically by Solr.
+             DEPRECATED: Use itime instead.
              Sample use: Freezing a query result even when new documents are added to the index:
                          q=foo&fq=index_time:[* TO 2018-05-16T10:33:00Z]
              Sample use: Discover new documents added since last check for new documents:

@@ -162,9 +162,14 @@ Indexed into Solr using `grundtvig.sh` with corresponding `GRUNDTVIG.md`.
 
 Open Access documents with regulations and similar regarding Danish public school, original location [AU Library: Skolelove](https://library.au.dk/materialer/saersamlinger/skolelove/). Published using MeLOAR at [MELOAR - Folkeskole](https://labs.statsbiblioteket.dk/meloar/folkeskole/).
 
-Data fetched directly. The project [meloar-transform](https://github.com/statsbiblioteket/meloar-transform) was used to transform the data to a LOAR-friendly format, and they were then ingested by a LOAR administrator.
+Core data delivered as one-time Excel. The project [meloar-transform](https://github.com/statsbiblioteket/meloar-transform) was used to transform the data to a LOAR-friendly format, and they were then ingested by a LOAR administrator.
 
-Indexed into Solr using `folkeskole.sh` with corresponding `DANMARKS_KIRKER.md`. No explicit README.
+Document-specific metadata and (sometimes) PDF is available at e.g. [https://library.au.dk/materialer/saersamlinger/skolelove/?tx_lfskolelov_pi1[lawid]=25](https://library.au.dk/materialer/saersamlinger/skolelove/?tx_lfskolelov_pi1[lawid]=25).
+
+Extraction of the descriptions on the pages is handled by the script `folkeskole_harvest.sh`. Note that only some of the documents have a description.
+
+
+Indexed into Solr using `folkeskole.sh`. No explicit README.
 
 ### Partiprogrammer
 

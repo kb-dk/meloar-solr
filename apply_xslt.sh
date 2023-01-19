@@ -19,6 +19,7 @@ fi
 : ${XSLT:="$2"}
 : ${SUB_SOURCE:="$3"}
 : ${SUB_DEST:="$4"}
+REQUIREMENTS="xsltproc"
 
 usage() {
     echo ""
@@ -28,7 +29,17 @@ usage() {
     exit $1
 }
 
+check_requirements() {
+    for REQ in $REQUIREMENTS; do
+        if [[ -z $(which $REQ) ]]; then
+            >&2 echo "Error: '$REQ' not available, please install it"
+            exit 11
+        fi
+    done
+}
+
 check_parameters() {
+    check_requirements
     if [[ "." == ".$PROJECT" ]]; then
         >&2 echo "Error: No project specified"
         usage 3
