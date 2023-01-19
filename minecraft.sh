@@ -6,8 +6,11 @@
 # Bash line for mapping CSV with coordinates to LOAR records (remember to adjust path):
 # (head -n 2 minecraft_filelist.csv ; tail -n+3 minecraft_filelist.csv  | while read -r LINE; do echo -n "${LINE}," ; grep "identifier.*doi"  "$(grep -m 1 -l "$(cut -d, -f6,7 <<< "$LINE")" /home/te/projects/meloar-solr/minecraft/records/*.xml)" | sed 's/.*>\(.*\)<.*/\1/' ; done) | tee jorn.csv
 # 
+# Vigtig note: man kan konvertere en liste af UTM koordinater til Latitude and Longitude coordinates
+# på det her site: https://www.engineeringtoolbox.com/utm-latitude-longitude-d_1370.html
+# Det har jeg brugt til den her csv-fil: minecraft_filelist.csv
 #
-#
+
 : ${PROJECT:="minecraft"}
 : ${REPOSITORY:="https://loar.kb.dk/oai/request"}
 
