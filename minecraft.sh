@@ -3,7 +3,11 @@
 #
 # Harvest Minecraft maps from LOAR
 #
-
+# Bash line for mapping CSV with coordinates to LOAR records (remember to adjust path):
+# (head -n 2 minecraft_filelist.csv ; tail -n+3 minecraft_filelist.csv  | while read -r LINE; do echo -n "${LINE}," ; grep "identifier.*doi"  "$(grep -m 1 -l "$(cut -d, -f6,7 <<< "$LINE")" /home/te/projects/meloar-solr/minecraft/records/*.xml)" | sed 's/.*>\(.*\)<.*/\1/' ; done) | tee jorn.csv
+# 
+#
+#
 : ${PROJECT:="minecraft"}
 : ${REPOSITORY:="https://loar.kb.dk/oai/request"}
 
